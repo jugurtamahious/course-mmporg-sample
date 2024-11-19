@@ -36,6 +36,7 @@ public class TCPServer : MonoBehaviour
         }
     }
 
+    // Envoie les message à tout les clients
     public void BroadcastTCPMessage(string message) {
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(message);
         BroadcastTCPBytes(bytes);
@@ -92,16 +93,16 @@ public class TCPServer : MonoBehaviour
         ReceiveTCP();
     }
 
-
-    private void ReceiveTCP() {
-        if (tcp == null) { return; }
-
+   public string ReceiveTCP() {
+        if (tcp == null) { 
+            return null; 
+        }
+        
         while (tcp.Pending()) {
             TcpClient tcpClient = tcp.AcceptTcpClient();       
             Debug.Log("New connection received from: " + ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address);
             Connections.Add(tcpClient);
 
-            // Welcome message
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(OnConnectionMessage);
             SendTCPBytes(tcpClient, bytes);
         }
@@ -110,29 +111,30 @@ public class TCPServer : MonoBehaviour
             if (!client.Connected) {
                 Debug.Log("Client disconnected");
                 Connections.Remove(client);
-                return;
+                continue; 
             }
 
-            while (client.Available > 0)
-            {   
+            while (client.Available > 0) {   
                 byte[] data = new byte[client.Available];
                 client.GetStream().Read(data, 0, client.Available);
 
-                try
-                {
-                    ParseString(data);
-                }
-                catch (System.Exception ex)
-                {
+                try {
+                    return ParseString(data); 
+                } catch (System.Exception ex) {
                     Debug.LogWarning("Error receiving TCP message: " + ex.Message);
+                    return "false"; 
                 }
             }
         }
+
+        return null; 
     }
 
-    private void ParseString(byte[] bytes) {
+
+    public string ParseString(byte[] bytes) {
         string message = System.Text.Encoding.UTF8.GetString(bytes);
         OnMessageReceive.Invoke(message);
+        return message;
     }
 
     private void CloseTCP() {
