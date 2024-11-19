@@ -8,14 +8,14 @@ public class ReceiveTcpMessages : MonoBehaviour
     {
         
     }
-
+    
     // Update is called once per frame
     void Update()
     {
         string str = Serveur.ReceiveTCP();
 
         if (str != null){
-             Serveur.BroadcastMessageViaTCP(str);
+              Serveur.BroadcastTCPMessage(str);
         }
        
     }

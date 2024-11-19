@@ -17,6 +17,10 @@ public class TCPServer : MonoBehaviour
 
     private List<TcpClient> Connections = new List<TcpClient>();
 
+    // Nouvel événement pour une connexion client
+    public delegate void ClientConnected(string clientAddress);
+    public event ClientConnected OnClientConnected;
+
     public bool Listen(TCPMessageReceive handler) {
         if (tcp != null) {
             Debug.LogWarning("Socket already initialized! Close it first.");
@@ -97,13 +101,17 @@ public class TCPServer : MonoBehaviour
         if (tcp == null) { 
             return null; 
         }
-        
+
         while (tcp.Pending()) {
             TcpClient tcpClient = tcp.AcceptTcpClient();       
-            Debug.Log("New connection received from: " + ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address);
-            Connections.Add(tcpClient);
+            string clientAddress = ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.ToString();
+            Debug.Log("New connection received from: " + clientAddress);            Connections.Add(tcpClient);
 
             byte[] bytes = System.Text.Encoding.UTF8.GetBytes(OnConnectionMessage);
+
+             // **Invoquer l'événement pour signaler la connexion**
+            OnClientConnected?.Invoke(clientAddress);
+
             SendTCPBytes(tcpClient, bytes);
         }
 
