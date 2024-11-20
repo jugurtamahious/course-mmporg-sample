@@ -6,7 +6,7 @@ using System.Collections.Generic;
 public enum CharacterPlayer
 {
     Player1,
-    Player2
+    
 }
 
 public class CharacterController : MonoBehaviour
@@ -35,9 +35,7 @@ public class CharacterController : MonoBehaviour
             case CharacterPlayer.Player1:
                 PlayerAction = inputs.Player1.Move;
                 break;
-            case CharacterPlayer.Player2:
-                PlayerAction = inputs.Player2.Move;
-                break;
+           
         }
 
         PlayerAction.Enable();
@@ -64,23 +62,30 @@ public class CharacterController : MonoBehaviour
         rb.MoveRotation(newRotation);
 
         // Récupérer les données du joueur
-        RetrievePlayerData(newPosition, vec.y, vec.x);
-    }
+        RetrievePlayerData(newPosition, vec.y, newRotation);
 
-    void RetrievePlayerData(Vector3 position, float walkValue, float rotateValue)
+
+        Debug.Log(vec.y);
+
+        //Debug.Log($"Player {Player} position: {newPosition}, walk: {vec.y}, rotate: {vec.x}");
+    } 
+
+    void RetrievePlayerData(Vector3 position, float walkValue, Quaternion rotation)
     {
         // Stockage des données
         PlayerData data = new PlayerData
         {
             PlayerID = Player.ToString(),
             Position = position,
-            Animation = walkValue > 0 ? "Walking" : "Idle",
-            Rotation = rotateValue,
-            WalkSpeed = walkValue
+            Animation = walkValue,
+            Rotation = rotation
+
+            
         };
 
         // Ajouter à l'historique
         dataHistory.Add(data);
+        //Debug.Log(rotation);
     }
 
     private void SavePositionHistoryToJson()
@@ -114,9 +119,9 @@ public class PlayerData
 {
     public string PlayerID;
     public Vector3 Position;
-    public string Animation;
-    public float Rotation;
-    public float WalkSpeed;
+    public float Animation;
+    public Quaternion Rotation;
+    
 }
 
 // Classe pour contenir une liste de données
