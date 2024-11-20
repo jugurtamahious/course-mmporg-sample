@@ -50,7 +50,12 @@ public class CharacterController : MonoBehaviour
 
         rb.MovePosition(rb.position + transform.forward * WalkSpeed * Time.fixedDeltaTime * vec.y);
 
-        rb.MoveRotation(rb.rotation * Quaternion.AngleAxis(RotateSpeed * Time.fixedDeltaTime * vec.x, Vector3.up));
+        // Mise à jour de la rotation
+        Quaternion newRotation = rb.rotation * Quaternion.AngleAxis(RotateSpeed * Time.fixedDeltaTime * vec.x, Vector3.up);
+        rb.MoveRotation(newRotation);
+
+        // Récupérer les données du joueur
+        RetrievePlayerData(newPosition, vec.y, vec.x);
     }
 
     void OnDisable()
