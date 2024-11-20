@@ -10,11 +10,14 @@ public class TCPServer : MonoBehaviour
     private TcpListener _tcpListener;
     private List<TcpClient> Clients = new List<TcpClient>();
     public int port = 25000;
-    public string ip = "192.168.0.103";
 
 
     public void Start()
     {
+
+    }
+
+    public void StartServer() {
         Debug.Log("Server started");
         _tcpListener = new TcpListener(IPAddress.Any, port);
         _tcpListener.Start();

@@ -26,7 +26,7 @@ public class CharacterController : MonoBehaviour
     Anim = GetComponent<Animator>();
     inputs = new MetaverseInput();
 
-    PlayerAction = inputs.Player2.Move;
+    PlayerAction = inputs.Player1.Move;
 
 
     PlayerAction.Enable();
@@ -54,6 +54,7 @@ public class CharacterController : MonoBehaviour
   {
     Vector3 position = transform.position;
     string message = JsonUtility.ToJson(new { x = position.x, y = position.y, z = position.z });
+    // Envoyer la position au GameState
     // Appeler un script UDP pour envoyer la position (ex : UDPServer.Instance.Send(message));
   }
 
