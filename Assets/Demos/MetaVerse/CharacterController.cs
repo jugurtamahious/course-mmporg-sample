@@ -62,7 +62,7 @@ public class CharacterController : MonoBehaviour
         rb.MoveRotation(newRotation);
 
         // Récupérer les données du joueur
-        RetrievePlayerData(newPosition, vec.y, newRotation);
+        RetrievePlayerData(newPosition, newRotation);
 
 
         Debug.Log(vec.y);
@@ -70,18 +70,21 @@ public class CharacterController : MonoBehaviour
         //Debug.Log($"Player {Player} position: {newPosition}, walk: {vec.y}, rotate: {vec.x}");
     } 
 
-    void RetrievePlayerData(Vector3 position, float walkValue, Quaternion rotation)
-    {
-        // Stockage des données
-        PlayerData data = new PlayerData
-        {
-            PlayerID = Player.ToString(),
-            Position = position,
-            Animation = walkValue,
-            Rotation = rotation
+    private float lastRecordedTime = 0f; // Dernier temps enregistré
 
-            
-        };
+void RetrievePlayerData(Vector3 position, Quaternion rotation)
+{
+    float currentTime = Time.time; // Temps actuel dans Unity
+    float deltaTime = currentTime - lastRecordedTime; // Temps écoulé depuis le dernier enregistrement
+    lastRecordedTime = currentTime; // Mettre à jour le dernier temps enregistré
+
+    PlayerData data = new PlayerData
+    {
+        PlayerID = Player.ToString(),
+        Position = position,
+        Rotation = rotation,
+        DeltaTime = deltaTime
+    };
 
         // Ajouter à l'historique
         dataHistory.Add(data);
@@ -109,7 +112,7 @@ public class CharacterController : MonoBehaviour
     void OnDisable()
     {
         PlayerAction.Disable();
-        SavePositionHistoryToJson(); // Sauvegarde les données lors de la désactivation de l'objet
+        SavePositionHistoryToJson(); 
     }
 }
 
@@ -119,8 +122,8 @@ public class PlayerData
 {
     public string PlayerID;
     public Vector3 Position;
-    public float Animation;
     public Quaternion Rotation;
+    public float DeltaTime; 
     
 }
 
