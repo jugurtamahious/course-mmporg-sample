@@ -1,0 +1,112 @@
+[
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 249.40
+      },
+      "Animation": 1,
+      "Rotation": 0
+  },
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 249.46
+      },
+      "Animation": 1,
+      "Rotation": 0
+  },
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 249.52
+      },
+      "Animation": 1,
+      "Rotation": 0
+  },
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 249.58
+      },
+      "Animation": 1,
+      "Rotation": 0
+  },
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 249.64
+      },
+      "Animation": 1,
+      "Rotation": 0
+  },
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 249.70
+      },
+      "Animation": 1,
+      "Rotation": 0
+  },
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 249.76
+      },
+      "Animation": 1,
+      "Rotation": 0
+  },
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 249.82
+      },
+      "Animation": 1,
+      "Rotation": 0
+  },
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 249.88
+      },
+      "Animation": 1,
+      "Rotation": 0
+  },
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 249.94
+      },
+      "Animation": 1,
+      "Rotation": 0
+  },
+  {
+      "WalkingValue": 1,
+      "Position": {
+          "x": 250.41,
+          "y": 0.32,
+          "z": 250.00
+      },
+      "Animation": 1,
+      "Rotation": 0
+  }
+]
