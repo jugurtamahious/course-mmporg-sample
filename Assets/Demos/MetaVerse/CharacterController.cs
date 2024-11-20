@@ -67,61 +67,8 @@ public class CharacterController : MonoBehaviour
         RetrievePlayerData(newPosition, vec.y, vec.x);
     }
 
-    void RetrievePlayerData(Vector3 position, float walkValue, float rotateValue)
-    {
-        // Stockage des données
-        PlayerData data = new PlayerData
-        {
-            PlayerID = Player.ToString(),
-            Position = position,
-            Animation = walkValue > 0 ? "Walking" : "Idle",
-            Rotation = rotateValue,
-            WalkSpeed = walkValue
-        };
-
-        // Ajouter à l'historique
-        dataHistory.Add(data);
-    }
-
-    private void SavePositionHistoryToJson()
-    {
-        try
-        {
-            // Convertir l'historique en JSON
-            string json = JsonUtility.ToJson(new PlayerDataList { Data = dataHistory }, true);
-            
-            // Sauvegarder dans le fichier
-            File.WriteAllText(filePath, json);
-
-            Debug.Log("Position history saved successfully to JSON!");
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"Failed to save position history: {ex.Message}");
-        }
-    }
-
     void OnDisable()
     {
         PlayerAction.Disable();
-        SavePositionHistoryToJson(); // Sauvegarde les données lors de la désactivation de l'objet
     }
-}
-
-// Classe pour structurer les données du joueur
-[System.Serializable]
-public class PlayerData
-{
-    public string PlayerID;
-    public Vector3 Position;
-    public string Animation;
-    public float Rotation;
-    public float WalkSpeed;
-}
-
-// Classe pour contenir une liste de données
-[System.Serializable]
-public class PlayerDataList
-{
-    public List<PlayerData> Data = new List<PlayerData>();
 }
