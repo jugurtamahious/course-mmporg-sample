@@ -25,15 +25,11 @@ public class CharacterController : MonoBehaviour
   private Vector3 networkedPosition; // Position reçue du serveur pour interpolation
   private float lastRecordedTime = 0f; // Dernier temps enregistré
 
-  // Historique des données
-  private List<PlayerData> dataHistory = new List<PlayerData>();
-
   private string filePath;
 
   // Start is called once before the first execution of Update after the MonoBehaviour is created
   void Start()
   {
-
     Anim = GetComponent<Animator>();
     inputs = new MetaverseInput();
     PlayerAction = inputs.Player1.Move;
@@ -41,10 +37,6 @@ public class CharacterController : MonoBehaviour
     PlayerAction.Enable();
 
     rb = GetComponent<Rigidbody>();
-
-    // Chemin du fichier JSON pour sauvegarder les données
-    filePath = Path.Combine(Application.dataPath, "PlayerDataHistory.json");
-    // Debug.Log($"Data will be saved to: {filePath}");
   }
 
   // Update is called once per frame
@@ -118,30 +110,8 @@ public class CharacterController : MonoBehaviour
       Rotation = rotation,
       DeltaTime = deltaTime
     };
-
-    // Ajouter à l'historique
-    dataHistory.Add(data);
-    //Debug.Log(rotation);
+  
   }
-
-  private void SavePositionHistoryToJson()
-  {
-    try
-    {
-      // Convertir l'historique en JSON
-      string json = JsonUtility.ToJson(new PlayerDataList { Data = dataHistory }, true);
-
-      // Sauvegarder dans le fichier
-      File.WriteAllText(filePath, json);
-
-      Debug.Log("Position history saved successfully to JSON!");
-    }
-    catch (System.Exception ex)
-    {
-      Debug.LogError($"Failed to save position history: {ex.Message}");
-    }
-  }
-
 
 }
 

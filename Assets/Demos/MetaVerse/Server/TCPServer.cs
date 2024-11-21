@@ -10,7 +10,7 @@ public class TCPServer : MonoBehaviour
     private TcpListener _tcpListener;
     private List<TcpClient> Clients = new List<TcpClient>();
     public GameManager gm;
-    public int port = 25000;
+    public int port = GameManager.HostPort;
 
 
     public void Start()
@@ -23,20 +23,15 @@ public class TCPServer : MonoBehaviour
         _tcpListener = new TcpListener(IPAddress.Any, port);
         _tcpListener.Start();
         Debug.Log("TCP Server started on port " + port);
-
-        // Start accepting clients
-        // _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
     }
 
     public void Update()
     {
         string str = ReceiveTCP();
-        // Debug.Log(Clients.Count);
-
 
         if (str != null)
         {
-            Debug.Log("Je créé un player");
+            Debug.Log("Création du joueur : " + str);
             gm.OnNewClientConnected(str);
         }
     }
@@ -49,18 +44,6 @@ public class TCPServer : MonoBehaviour
         }
         _tcpListener?.Stop();
     }
-
-
-    // private void OnClientConnect(IAsyncResult result)
-    // {
-    //     TcpClient client = _tcpListener.EndAcceptTcpClient(result);
-    //     int clientId = Clients.Count;
-    //     Clients.Add(client);
-    //     Debug.Log($"Client {clientId} connected.");
-
-    //     // Await next connection
-    //     _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
-    // }
 
     public string ReceiveTCP()
     {
@@ -89,18 +72,6 @@ public class TCPServer : MonoBehaviour
                 // Enlever son personnage
                 continue;
             }
-
-            // while (client.Available > 0) {   
-            //     byte[] data = new byte[client.Available];
-            //     client.GetStream().Read(data, 0, client.Available);
-
-            //     try {
-            //         return ParseString(data); 
-            //     } catch (System.Exception ex) {
-            //         Debug.LogWarning("Error receiving TCP message: " + ex.Message);
-            //         return "false"; 
-            //     }
-            // }
         }
 
         return null;

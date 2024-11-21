@@ -13,23 +13,52 @@ public class GameManager : MonoBehaviour
 
     private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
 
-    void Update() {
+    void Update()
+    {
         // Récupérer les données UDP reçues
-        
+
+        // Mise à jour du state
+
+        Debug.Log(clientCharacters.Keys.ToString());
+
+        // Envoie du state aux clients
+
     }
+
+    // Gestion de l'événement lorsque le serveur démarre
+    public void OnServerStarted()
+    {
+        Debug.Log("GameManager démarré");
+
+        // Mettre l'instance du joueur existant dans le serveur
+        GameObject engineer = GameObject.FindWithTag("hostPlayer");
+
+        if (engineer != null)
+        {
+            clientCharacters[GameManager.HostIP] = engineer;
+        }
+        else
+        {
+            Debug.LogError("Aucun GameObject avec le tag 'Engineer' trouvé !");
+        }
+
+    }
+
 
     // Gestion de l'événement lorsqu'un nouveau client se connecte
     public void OnNewClientConnected(string clientAddress)
     {
-        string newCharacterName = $"Character_{clientAddress}";
+        RemoveClient(clientAddress);
         Debug.Log($"Nouveau client connecté : {clientAddress}");
 
         // Instancier un nouveau personnage à l'endroit défini par SpawnArea
         if (CharacterPrefab != null && SpawnArea != null)
         {
+            // Instancier le personnage
             GameObject newCharacter = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
-            clientCharacters[clientAddress] = newCharacter;
 
+            // Ajouter le personnage à la liste des personnages clients
+            clientCharacters[clientAddress] = newCharacter;
             newCharacter.name = $"Character_{clientAddress}";
 
         }
@@ -37,6 +66,7 @@ public class GameManager : MonoBehaviour
 
     public void RemoveClient(string clientAddress)
     {
+        // Regarde si l'instance du joueur existe
         if (clientCharacters.TryGetValue(clientAddress, out GameObject character))
         {
             Destroy(character); // Supprimer l'instance du personnage
