@@ -7,9 +7,16 @@ public class GameManager : MonoBehaviour
     public TCPServer Server; // Référence au serveur
     public GameObject CharacterPrefab; // Le Prefab du personnage
     public Transform SpawnArea; // Le point de spawn
+    public UDPReceiver Receiver; // Référence au récepteur UDP
+    public static string HostIP;
+    public static int HostPort;
 
     private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
 
+    void Update() {
+        // Récupérer les données UDP reçues
+        
+    }
 
     // Gestion de l'événement lorsqu'un nouveau client se connecte
     public void OnNewClientConnected(string clientAddress)

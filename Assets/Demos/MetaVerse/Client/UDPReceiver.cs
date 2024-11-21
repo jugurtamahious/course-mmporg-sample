@@ -23,7 +23,7 @@ public class UDPReceiver : MonoBehaviour
     {
         try 
         {
-            IPEndPoint remoteIP = new IPEndPoint(IPAddress.Any, 25000);
+            IPEndPoint remoteIP = new IPEndPoint(IPAddress.Any, 25004);
             byte[] data = udpClient.Receive(ref remoteIP);
             string message = Encoding.UTF8.GetString(data);
             

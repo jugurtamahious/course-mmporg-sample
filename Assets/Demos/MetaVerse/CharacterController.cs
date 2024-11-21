@@ -38,8 +38,6 @@ public class CharacterController : MonoBehaviour
     inputs = new MetaverseInput();
     PlayerAction = inputs.Player1.Move;
 
-
-
     PlayerAction.Enable();
 
     rb = GetComponent<Rigidbody>();
@@ -63,21 +61,10 @@ public class CharacterController : MonoBehaviour
     Quaternion newRotation = rb.rotation * Quaternion.AngleAxis(RotateSpeed * Time.fixedDeltaTime * vec.x, Vector3.up);
     rb.MoveRotation(newRotation);
 
-    // Récupérer les données du joueur
-    // RetrievePlayerData(newPosition, newRotation);
-
-    // Envoie des données
-    // Debug.Log("Envoie données");
-
-
     RetrievePlayerData(newPosition, newRotation);
 
     // Envoie de la position au serveur
     SendPositionToServer();
-
-    // Debug.Log(vec.y);
-
-    //Debug.Log($"Player {Player} position: {newPosition}, walk: {vec.y}, rotate: {vec.x}");
   }
 
   void OnDisable()
@@ -97,7 +84,8 @@ public class CharacterController : MonoBehaviour
     // Debug.Log($"Position envoyée : {messageString}");
 
     // TODO : Remplacer par les données du serveur
-    udpServer.SendData(messageString, "127.0.0.1", 25001);
+    udpServer.SendData(messageString, "127.0.0.1", 25004);
+
   }
 
   public void UpdatePositionFromServer(Vector3 newPos)
