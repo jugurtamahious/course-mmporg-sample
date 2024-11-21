@@ -4,8 +4,6 @@ using UnityEngine;
 public class HostUI : MonoBehaviour
 {
     public TCPServer Server;
-    public UDPSender UDPSender;
-    public UDPReceiver UDPReceiver;
     public TMPro.TMP_InputField InpPort;
     public GameObject BtnConnect;
     public GameObject UI;
@@ -33,10 +31,11 @@ public class HostUI : MonoBehaviour
         }
 
 
-        // Changement du port du serveur
+        // Changement du port 
         Server.port = port;
 
         // Démarrage du server
+        Debug.Log("Connexion");
         Server.StartServer();
         UI.SetActive(false);
     }

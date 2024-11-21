@@ -13,12 +13,12 @@ public class ReceiveTcpMessages : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        // string str = tCPServer.ReceiveTCP();
+        string str = tCPServer.ReceiveTCP();
 
-        // if (str != null){
-        //       Debug.Log("Je créé un player");
-        //       gameManager.OnNewClientConnected(str);
-        // }
+        if (str != null){
+              Debug.Log("Je créé un player");
+              gameManager.OnNewClientConnected(str);
+        }
        
     }
     

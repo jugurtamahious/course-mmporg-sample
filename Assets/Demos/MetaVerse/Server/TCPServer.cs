@@ -9,7 +9,6 @@ public class TCPServer : MonoBehaviour
 
     private TcpListener _tcpListener;
     private List<TcpClient> Clients = new List<TcpClient>();
-    public GameManager gm;
     public int port = 25000;
 
 
@@ -18,27 +17,20 @@ public class TCPServer : MonoBehaviour
 
     }
 
-    public void StartServer()
-    {
+    public void StartServer() {
+        Debug.Log("Server started");
         _tcpListener = new TcpListener(IPAddress.Any, port);
         _tcpListener.Start();
-        Debug.Log("TCP Server started on port " + port);
+        Debug.Log("Server started on port " + port);
 
         // Start accepting clients
-        // _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
+        _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
     }
 
     public void Update()
     {
-        string str = ReceiveTCP();
-        // Debug.Log(Clients.Count);
-
-
-        if (str != null)
-        {
-            Debug.Log("Je créé un player");
-            gm.OnNewClientConnected(str);
-        }
+        // Debug.Log("Server updated");
+        ReceiveTCP();
     }
 
     private void OnApplicationQuit()
@@ -51,43 +43,37 @@ public class TCPServer : MonoBehaviour
     }
 
 
-    // private void OnClientConnect(IAsyncResult result)
-    // {
-    //     TcpClient client = _tcpListener.EndAcceptTcpClient(result);
-    //     int clientId = Clients.Count;
-    //     Clients.Add(client);
-    //     Debug.Log($"Client {clientId} connected.");
-
-    //     // Await next connection
-    //     _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
-    // }
-
-    public string ReceiveTCP()
+    private void OnClientConnect(IAsyncResult result)
     {
-        if (_tcpListener == null)
-        {
-            return null;
+        TcpClient client = _tcpListener.EndAcceptTcpClient(result);
+        int clientId = Clients.Count;
+        Clients.Add(client);
+        Debug.Log($"Client {clientId} connected.");
+
+        // Await next connection
+        _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
+    }
+
+    public string ReceiveTCP() {
+        if (_tcpListener == null) { 
+            return null; 
         }
 
-        while (_tcpListener.Pending())
+         while (_tcpListener.Pending())
         {
             TcpClient tcpClient = _tcpListener.AcceptTcpClient();
             string clientAddress = ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.ToString();
             Debug.Log("New connection received from: " + clientAddress);
             Clients.Add(tcpClient);
-
-            return clientAddress;
+            return $"New connection received from: {clientAddress}";
         }
 
-        foreach (TcpClient client in Clients)
-        {
+        foreach (TcpClient client in Clients){
 
-            if (!client.Connected)
-            {
+            if (!client.Connected) {
                 Debug.Log("Client disconnected");
                 Clients.Remove(client);
-                // Enlever son personnage
-                continue;
+                continue; 
             }
 
             // while (client.Available > 0) {   
@@ -103,14 +89,13 @@ public class TCPServer : MonoBehaviour
             // }
         }
 
-        return null;
+        return null; 
     }
 
-    public string ParseString(byte[] bytes)
-    {
+     public string ParseString(byte[] bytes) {
         string message = System.Text.Encoding.UTF8.GetString(bytes);
         // OnMessageReceive.Invoke(message);
         return message;
     }
-
+   
 }

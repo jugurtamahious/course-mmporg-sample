@@ -8,7 +8,6 @@ public class JoinUI : MonoBehaviour
     public GameObject BtnConnect;
     public GameObject UI;
     public int port = 25000;
-    public UDPSender udpSender;
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -32,14 +31,10 @@ public class JoinUI : MonoBehaviour
             return;
         }
 
-        // Paramêtre pour la connexion TCP
+
         string ip = InpIp.text;
         int port = int.Parse(InpPort.text);
-
-        // Connexion UDP
-        udpSender.serverIP = ip;
-        udpSender.serverPort = port + 1;
-
+        Debug.Log(port);
 
         Client.Connect(ip, port);
         UI.SetActive(false);
