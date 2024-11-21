@@ -32,7 +32,7 @@ public class CharacterController : MonoBehaviour
   // Start is called once before the first execution of Update after the MonoBehaviour is created
   void Start()
   {
-
+    Debug.Log(Globals.IsServer);
     Anim = GetComponent<Animator>();
     inputs = new MetaverseInput();
     PlayerAction = inputs.Player1.Move;
@@ -76,7 +76,7 @@ public class CharacterController : MonoBehaviour
         // Récupérer la position du GameObject
         Vector3 position = transform.position;
         string message = "x: " + position.x + " y: " + position.y + " z: " + position.z;
-        
+
         // Créer un objet anonyme contenant les coordonnées
         var positionData = new { x = position.x, y = position.y, z = position.z };
 
