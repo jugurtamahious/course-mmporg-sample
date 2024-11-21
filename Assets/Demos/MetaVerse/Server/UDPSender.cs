@@ -15,7 +15,7 @@ public class UDPSender : MonoBehaviour
     private void Start()
     {
         udpClient = new UdpClient();
-        this.serverPort = server.port + 1;
+        // this.serverPort = server.port + 1;
         Debug.Log("UDP Sender initialisé");
     }
 
