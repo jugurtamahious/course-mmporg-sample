@@ -41,7 +41,6 @@ public class CharacterController : MonoBehaviour
 
         // Chemin du fichier JSON pour sauvegarder les données
         filePath = Path.Combine(Application.dataPath, "PlayerDataHistory.json");
-        Debug.Log($"Data will be saved to: {filePath}");
     }
 
     // Update is called once per frame
@@ -60,9 +59,6 @@ public class CharacterController : MonoBehaviour
 
         // Récupérer les données du joueur
         RetrievePlayerData(newPosition, newRotation);
-
-
-        Debug.Log(vec.y);
 
         //Debug.Log($"Player {Player} position: {newPosition}, walk: {vec.y}, rotate: {vec.x}");
     }
