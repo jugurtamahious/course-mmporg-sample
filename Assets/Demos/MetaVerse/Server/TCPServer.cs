@@ -24,7 +24,7 @@ public class TCPServer : MonoBehaviour
         Debug.Log("Server started on port " + port);
 
         // Start accepting clients
-        _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
+        // _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
     }
 
     public void Update()
@@ -43,16 +43,16 @@ public class TCPServer : MonoBehaviour
     }
 
 
-    private void OnClientConnect(IAsyncResult result)
-    {
-        TcpClient client = _tcpListener.EndAcceptTcpClient(result);
-        int clientId = Clients.Count;
-        Clients.Add(client);
-        Debug.Log($"Client {clientId} connected.");
+    // private void OnClientConnect(IAsyncResult result)
+    // {
+    //     TcpClient client = _tcpListener.EndAcceptTcpClient(result);
+    //     int clientId = Clients.Count;
+    //     Clients.Add(client);
+    //     Debug.Log($"Client {clientId} connected.");
 
-        // Await next connection
-        _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
-    }
+    //     // Await next connection
+    //     _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
+    // }
 
     public string ReceiveTCP() {
         if (_tcpListener == null) { 

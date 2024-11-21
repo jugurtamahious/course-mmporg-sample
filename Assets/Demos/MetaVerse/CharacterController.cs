@@ -2,11 +2,12 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.IO;
 using System.Collections.Generic;
+using System.Net.Sockets;
+using System.Net;
 
 public enum CharacterPlayer
 {
   Player1,
-
 }
 
 public class CharacterController : MonoBehaviour
@@ -14,6 +15,7 @@ public class CharacterController : MonoBehaviour
   public CharacterPlayer Player = CharacterPlayer.Player1;
   public float WalkSpeed = 3;
   public float RotateSpeed = 250;
+  public UDPServer udpServer;
 
   Animator Anim;
   MetaverseInput inputs;
@@ -31,6 +33,7 @@ public class CharacterController : MonoBehaviour
   // Start is called once before the first execution of Update after the MonoBehaviour is created
   void Start()
   {
+    
     Anim = GetComponent<Animator>();
     inputs = new MetaverseInput();
     switch (Player)
@@ -38,7 +41,6 @@ public class CharacterController : MonoBehaviour
       case CharacterPlayer.Player1:
         PlayerAction = inputs.Player1.Move;
         break;
-
     }
 
     PlayerAction.Enable();
@@ -66,9 +68,11 @@ public class CharacterController : MonoBehaviour
 
     // Récupérer les données du joueur
     RetrievePlayerData(newPosition, newRotation);
-
-
-    Debug.Log(vec.y);
+    
+    // Envoie de la position au serveur
+    SendPositionToServer();
+    
+    // Debug.Log(vec.y);
 
     //Debug.Log($"Player {Player} position: {newPosition}, walk: {vec.y}, rotate: {vec.x}");
   }
@@ -82,8 +86,14 @@ public class CharacterController : MonoBehaviour
   {
     Vector3 position = transform.position;
     string message = JsonUtility.ToJson(new { x = position.x, y = position.y, z = position.z });
-    // Envoyer la position au GameState
-    // Appeler un script UDP pour envoyer la position (ex : UDPServer.Instance.Send(message));
+    byte[] messageByte = MessageToByte(message);
+    
+    IPAddress targetAddress = IPAddress.Parse("127.0.0.1");
+    udpServer.SendData(messageByte, new IPEndPoint(targetAddress, 2500));
+  }
+
+  private byte[] MessageToByte(string message) {
+    return System.Text.Encoding.UTF8.GetBytes(message);
   }
 
   public void UpdatePositionFromServer(Vector3 newPos)
@@ -102,12 +112,7 @@ public class CharacterController : MonoBehaviour
     // Logique pour déterminer si c'est le joueur contrôlé localement
     return true; // Remplacez par votre logique de contrôle réseau
   }
-
-
-
-
-
-
+  
   void RetrievePlayerData(Vector3 position, Quaternion rotation)
   {
     float currentTime = Time.time; // Temps actuel dans Unity

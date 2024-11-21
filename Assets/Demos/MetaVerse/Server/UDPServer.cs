@@ -6,7 +6,7 @@ using UnityEngine;
 public class UDPServer: MonoBehaviour
 {
     private UdpClient _udpServer;
-    public int port = 25000;
+    public int port = 2500;
 
     public void Start()
     {
