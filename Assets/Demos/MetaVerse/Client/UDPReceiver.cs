@@ -10,6 +10,10 @@ public class UDPReceiver : MonoBehaviour
 
     void Start()
     {
+    }
+
+    public void StartServer()
+    {
         udpClient = new UdpClient(port);
         Invoke("ReceiveMessage", 0.1f);
     }

@@ -6,13 +6,16 @@ using UnityEngine;
 public class UDPSender : MonoBehaviour
 {
     public string serverIP = "127.0.0.1"; // Adresse IP du destinataire
-    public int serverPort = 25001;       // Port du destinataire
-
     private UdpClient udpClient;
+    public TCPServer server;
+
+    public int serverPort = 25000;       // Port du destinataire
+
 
     private void Start()
     {
         udpClient = new UdpClient();
+        this.serverPort = server.port + 1;
         Debug.Log("UDP Sender initialisé");
     }
 
@@ -26,7 +29,6 @@ public class UDPSender : MonoBehaviour
             // Envoi des données
             udpClient.Send(data, data.Length, serverIP, serverPort);
 
-            Debug.Log(serverIP + " " + serverPort);
             // Debug.Log($"Data envoyé: {message}");
         }
         catch (SocketException ex)

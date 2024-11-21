@@ -20,10 +20,9 @@ public class TCPServer : MonoBehaviour
 
     public void StartServer()
     {
-        Debug.Log("Server started");
         _tcpListener = new TcpListener(IPAddress.Any, port);
         _tcpListener.Start();
-        Debug.Log("Server started on port " + port);
+        Debug.Log("TCP Server started on port " + port);
 
         // Start accepting clients
         _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
