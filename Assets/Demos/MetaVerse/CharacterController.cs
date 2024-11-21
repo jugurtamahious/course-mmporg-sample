@@ -12,7 +12,7 @@ public enum CharacterPlayer
 public class CharacterController : MonoBehaviour
 {
     public CharacterPlayer Player = CharacterPlayer.Player1;
-    public float WalkSpeed = 3;
+    public float WalkSpeed = 5;
     public float RotateSpeed = 250;
 
     Animator Anim;
