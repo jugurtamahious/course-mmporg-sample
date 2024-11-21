@@ -9,6 +9,7 @@ public class TCPServer : MonoBehaviour
 
     private TcpListener _tcpListener;
     private List<TcpClient> Clients = new List<TcpClient>();
+    public GameManager gm;
     public int port = 25000;
 
 
@@ -17,11 +18,11 @@ public class TCPServer : MonoBehaviour
 
     }
 
-    public void StartServer() {
-        Debug.Log("Server started");
+    public void StartServer()
+    {
         _tcpListener = new TcpListener(IPAddress.Any, port);
         _tcpListener.Start();
-        Debug.Log("Server started on port " + port);
+        Debug.Log("TCP Server started on port " + port);
 
         // Start accepting clients
         _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
@@ -29,8 +30,13 @@ public class TCPServer : MonoBehaviour
 
     public void Update()
     {
-        // Debug.Log("Server updated");
-        ReceiveTCP();
+        string str = ReceiveTCP();
+
+        if (str != null)
+        {
+            Debug.Log("Je créé un player");
+            gm.OnNewClientConnected(str);
+        }
     }
 
     private void OnApplicationQuit()
@@ -49,17 +55,20 @@ public class TCPServer : MonoBehaviour
         int clientId = Clients.Count;
         Clients.Add(client);
         Debug.Log($"Client {clientId} connected.");
+        gm.OnNewClientConnected(clientId.ToString());
 
         // Await next connection
         _tcpListener.BeginAcceptTcpClient(OnClientConnect, null);
     }
 
-    public string ReceiveTCP() {
-        if (_tcpListener == null) { 
-            return null; 
+    public string ReceiveTCP()
+    {
+        if (_tcpListener == null)
+        {
+            return null;
         }
 
-         while (_tcpListener.Pending())
+        while (_tcpListener.Pending())
         {
             TcpClient tcpClient = _tcpListener.AcceptTcpClient();
             string clientAddress = ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.ToString();
@@ -68,12 +77,14 @@ public class TCPServer : MonoBehaviour
             return $"New connection received from: {clientAddress}";
         }
 
-        foreach (TcpClient client in Clients){
+        foreach (TcpClient client in Clients)
+        {
 
-            if (!client.Connected) {
+            if (!client.Connected)
+            {
                 Debug.Log("Client disconnected");
                 Clients.Remove(client);
-                continue; 
+                continue;
             }
 
             // while (client.Available > 0) {   
@@ -89,13 +100,14 @@ public class TCPServer : MonoBehaviour
             // }
         }
 
-        return null; 
+        return null;
     }
 
-     public string ParseString(byte[] bytes) {
+    public string ParseString(byte[] bytes)
+    {
         string message = System.Text.Encoding.UTF8.GetString(bytes);
         // OnMessageReceive.Invoke(message);
         return message;
     }
-   
+
 }

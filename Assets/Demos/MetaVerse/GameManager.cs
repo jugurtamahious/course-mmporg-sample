@@ -16,6 +16,11 @@ public class GameManager : MonoBehaviour
         {
             GameObject newCharacter = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
             newCharacter.name = $"Character_{clientAddress}";
+
+            CharacterController c = newCharacter.GetComponent<CharacterController>();
+            c.enabled = false;
+
+            
             
             Debug.Log("Je suis crée");
         }

@@ -2,6 +2,8 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.IO;
 using System.Collections.Generic;
+using System.Net.Sockets;
+using System.Net;
 
 public enum CharacterPlayer
 {
@@ -14,6 +16,7 @@ public class CharacterController : MonoBehaviour
   public CharacterPlayer Player = CharacterPlayer.Player1;
   public float WalkSpeed = 3;
   public float RotateSpeed = 250;
+  public UDPSender udpServer;
 
   Animator Anim;
   MetaverseInput inputs;
@@ -65,10 +68,14 @@ public class CharacterController : MonoBehaviour
     rb.MoveRotation(newRotation);
 
     // Récupérer les données du joueur
-    RetrievePlayerData(newPosition, newRotation);
+    // RetrievePlayerData(newPosition, newRotation);
+
+    // Envoie des données
+    // Debug.Log("Envoie données");
+    SendPositionToServer();
 
 
-    Debug.Log(vec.y);
+    // Debug.Log(vec.y);
 
     //Debug.Log($"Player {Player} position: {newPosition}, walk: {vec.y}, rotate: {vec.x}");
   }
@@ -81,9 +88,15 @@ public class CharacterController : MonoBehaviour
   private void SendPositionToServer()
   {
     Vector3 position = transform.position;
-    string message = JsonUtility.ToJson(new { x = position.x, y = position.y, z = position.z });
-    // Envoyer la position au GameState
-    // Appeler un script UDP pour envoyer la position (ex : UDPServer.Instance.Send(message));
+    float[] message = new float[] { position.x, position.y, position.z };
+
+    // Convertir le tableau en une chaîne lisible
+    string messageString = string.Join("/ ", message);
+    // Debug.Log($"Position envoyée : {messageString}");
+
+    // Envoyer les données via UDP
+    udpServer.SendData(messageString);
+
   }
 
   public void UpdatePositionFromServer(Vector3 newPos)
