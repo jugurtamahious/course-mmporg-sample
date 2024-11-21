@@ -8,7 +8,6 @@ using System.Net;
 public enum CharacterPlayer
 {
   Player1,
-
 }
 
 public class CharacterController : MonoBehaviour
@@ -34,6 +33,7 @@ public class CharacterController : MonoBehaviour
   // Start is called once before the first execution of Update after the MonoBehaviour is created
   void Start()
   {
+    
     Anim = GetComponent<Animator>();
     inputs = new MetaverseInput();
     switch (Player)
@@ -41,7 +41,6 @@ public class CharacterController : MonoBehaviour
       case CharacterPlayer.Player1:
         PlayerAction = inputs.Player1.Move;
         break;
-
     }
 
     PlayerAction.Enable();
@@ -75,6 +74,11 @@ public class CharacterController : MonoBehaviour
     SendPositionToServer();
 
 
+    RetrievePlayerData(newPosition, newRotation);
+    
+    // Envoie de la position au serveur
+    SendPositionToServer();
+    
     // Debug.Log(vec.y);
 
     //Debug.Log($"Player {Player} position: {newPosition}, walk: {vec.y}, rotate: {vec.x}");
@@ -88,14 +92,18 @@ public class CharacterController : MonoBehaviour
   private void SendPositionToServer()
   {
     Vector3 position = transform.position;
+    
+    
     float[] message = new float[] { position.x, position.y, position.z };
 
     // Convertir le tableau en une chaîne lisible
     string messageString = string.Join("/ ", message);
     // Debug.Log($"Position envoyée : {messageString}");
+    udpServer.SendData(messageString, "127.0.0.1", 25000);
+  }
 
-    // Envoyer les données via UDP
-    udpServer.SendData(messageString);
+  private byte[] MessageToByte(string message) {
+    return System.Text.Encoding.UTF8.GetBytes(message);
 
   }
 
@@ -115,12 +123,7 @@ public class CharacterController : MonoBehaviour
     // Logique pour déterminer si c'est le joueur contrôlé localement
     return true; // Remplacez par votre logique de contrôle réseau
   }
-
-
-
-
-
-
+  
   void RetrievePlayerData(Vector3 position, Quaternion rotation)
   {
     float currentTime = Time.time; // Temps actuel dans Unity

@@ -19,7 +19,7 @@ public class UDPSender : MonoBehaviour
         Debug.Log("UDP Sender initialisé");
     }
 
-    public void SendData(string message)
+    public void SendData(string message, string serverIp, int serverPorts)
     {
         try
         {
@@ -27,7 +27,7 @@ public class UDPSender : MonoBehaviour
             byte[] data = Encoding.UTF8.GetBytes(message);
 
             // Envoi des données
-            udpClient.Send(data, data.Length, serverIP, serverPort);
+            udpClient.Send(data, data.Length, new IPEndPoint(IPAddress.Parse(serverIp), serverPorts));
 
             // Debug.Log($"Data envoyé: {message}");
         }
