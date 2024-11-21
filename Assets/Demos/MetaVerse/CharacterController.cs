@@ -23,6 +23,8 @@ public class CharacterController : MonoBehaviour
   Rigidbody rb;
 
   private Vector3 networkedPosition; // Position reçue du serveur pour interpolation
+  private Quaternion networkedRotation;
+  private float networkedAnimation;
   private float lastRecordedTime = 0f; // Dernier temps enregistré
 
   // Historique des données
@@ -36,12 +38,8 @@ public class CharacterController : MonoBehaviour
     
     Anim = GetComponent<Animator>();
     inputs = new MetaverseInput();
-    switch (Player)
-    {
-      case CharacterPlayer.Player1:
-        PlayerAction = inputs.Player1.Move;
-        break;
-    }
+    PlayerAction = inputs.Player1.Move;
+    
 
     PlayerAction.Enable();
 
@@ -91,15 +89,22 @@ public class CharacterController : MonoBehaviour
 
   private void SendPositionToServer()
   {
+    float animationValue = Anim.GetFloat("Walk");
     Vector3 position = transform.position;
+    Quaternion rotation = transform.rotation;
+
+    //Debug.Log(animationValue);
     
+    float[] message = new float[] { position.x, position.y, position.z, rotation.x, rotation.y, rotation.z, rotation.w, animationValue };
+
     
-    float[] message = new float[] { position.x, position.y, position.z };
 
     // Convertir le tableau en une chaîne lisible
     string messageString = string.Join("/ ", message);
     // Debug.Log($"Position envoyée : {messageString}");
     udpServer.SendData(messageString, "127.0.0.1", 25000);
+
+    Debug.Log(messageString);
   }
 
   private byte[] MessageToByte(string message) {
@@ -107,16 +112,21 @@ public class CharacterController : MonoBehaviour
 
   }
 
-  public void UpdatePositionFromServer(Vector3 newPos)
+  public void UpdatePositionFromServer(Vector3 newPos, Quaternion newRot, float newAnim)
   {
     networkedPosition = newPos;
+    networkedRotation = newRot;
+    networkedAnimation = newAnim;
   }
 
   private void InterpolatePosition()
   {
     // Interpolation douce vers la position réseau
+    Anim.SetFloat("Walk", networkedAnimation);
     transform.position = Vector3.Lerp(transform.position, networkedPosition, Time.deltaTime * 10);
-  }
+    transform.rotation = Quaternion.Lerp(transform.rotation, networkedRotation, Time.deltaTime * 10);
+    
+   }
 
   private bool IsLocalPlayer()
   {
@@ -129,12 +139,14 @@ public class CharacterController : MonoBehaviour
     float currentTime = Time.time; // Temps actuel dans Unity
     float deltaTime = currentTime - lastRecordedTime; // Temps écoulé depuis le dernier enregistrement
     lastRecordedTime = currentTime; // Mettre à jour le dernier temps enregistré
+    float animationValue = Anim.GetFloat("Walk");
 
     PlayerData data = new PlayerData
     {
       PlayerID = Player.ToString(),
       Position = position,
       Rotation = rotation,
+      AnimationValue = animationValue > 0 ? 1 : animationValue < 0 ? -1 : 0,
       DeltaTime = deltaTime
     };
 
@@ -171,6 +183,7 @@ public class PlayerData
   public string PlayerID;
   public Vector3 Position;
   public Quaternion Rotation;
+  public float AnimationValue;
   public float DeltaTime;
 
 }
