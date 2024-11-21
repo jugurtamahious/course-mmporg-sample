@@ -33,7 +33,7 @@ public class HostUI : MonoBehaviour
         }
 
 
-        // Changement du port du serveur
+        // Changement du port 
         Server.port = port;
 
         string localIP = GetLocalIPAddress();
@@ -43,6 +43,7 @@ public class HostUI : MonoBehaviour
         GameManager.HostIP = localIP;
 
         // Démarrage du server
+        Debug.Log("Connexion");
         Server.StartServer();
         UI.SetActive(false);
     }

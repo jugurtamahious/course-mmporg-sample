@@ -18,8 +18,8 @@ public class TCPServer : MonoBehaviour
 
     }
 
-    public void StartServer()
-    {
+    public void StartServer() {
+        Debug.Log("Server started");
         _tcpListener = new TcpListener(IPAddress.Any, port);
         _tcpListener.Start();
         Debug.Log("TCP Server started on port " + port);
@@ -28,10 +28,12 @@ public class TCPServer : MonoBehaviour
     public void Update()
     {
         string str = ReceiveTCP();
+        // Debug.Log(Clients.Count);
+
 
         if (str != null)
         {
-            Debug.Log("Création du joueur : " + str);
+            Debug.Log("Je créé un player");
             gm.OnNewClientConnected(str);
         }
     }
@@ -52,36 +54,31 @@ public class TCPServer : MonoBehaviour
             return null;
         }
 
-        while (_tcpListener.Pending())
+         while (_tcpListener.Pending())
         {
             TcpClient tcpClient = _tcpListener.AcceptTcpClient();
             string clientAddress = ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.ToString();
             Debug.Log("New connection received from: " + clientAddress);
             Clients.Add(tcpClient);
-
-            return clientAddress;
+            return $"New connection received from: {clientAddress}";
         }
 
-        foreach (TcpClient client in Clients)
-        {
+        foreach (TcpClient client in Clients){
 
-            if (!client.Connected)
-            {
+            if (!client.Connected) {
                 Debug.Log("Client disconnected");
                 Clients.Remove(client);
-                // Enlever son personnage
-                continue;
+                continue; 
             }
         }
 
-        return null;
+        return null; 
     }
 
-    public string ParseString(byte[] bytes)
-    {
+     public string ParseString(byte[] bytes) {
         string message = System.Text.Encoding.UTF8.GetString(bytes);
         // OnMessageReceive.Invoke(message);
         return message;
     }
-
+   
 }

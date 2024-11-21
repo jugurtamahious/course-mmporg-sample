@@ -32,9 +32,10 @@ public class JoinUI : MonoBehaviour
             return;
         }
 
-        // Paramêtre pour la connexion TCP
+
         string ip = InpIp.text;
         int port = int.Parse(InpPort.text);
+        Debug.Log(port);
 
         Client.Connect(ip, port);
 
