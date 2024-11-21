@@ -10,6 +10,7 @@ public class UDPReceiver : MonoBehaviour
 
     void Start()
     {
+        StartServer();
     }
 
     public void StartServer()
@@ -18,15 +19,17 @@ public class UDPReceiver : MonoBehaviour
         Invoke("ReceiveMessage", 0.1f);
     }
 
-    void ReceiveMessage()
+    public void ReceiveMessage()
     {
         try 
         {
-            IPEndPoint remoteIP = new IPEndPoint(IPAddress.Any, 0);
+            IPEndPoint remoteIP = new IPEndPoint(IPAddress.Any, 25000);
             byte[] data = udpClient.Receive(ref remoteIP);
             string message = Encoding.UTF8.GetString(data);
             
             Debug.Log($"Message reçu : {message}");
+            Debug.Log($"Données reçues depuis : {remoteIP.Address}:{remoteIP.Port}");
+
         }
         catch (System.Exception e)
         {
@@ -39,6 +42,6 @@ public class UDPReceiver : MonoBehaviour
 
     void OnApplicationQuit()
     {
-        udpClient.Close();
+        // udpClient.Close();
     }
 }
