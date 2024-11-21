@@ -33,13 +33,7 @@ public class CharacterController : MonoBehaviour
     {
         Anim = GetComponent<Animator>();
         inputs = new MetaverseInput();
-        switch (Player)
-        {
-            case CharacterPlayer.Player1:
-                PlayerAction = inputs.Player1.Move;
-                break;
-
-        }
+        PlayerAction = inputs.Player1.Move;
 
         PlayerAction.Enable();
 
