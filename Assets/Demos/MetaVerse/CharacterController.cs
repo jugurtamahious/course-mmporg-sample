@@ -99,7 +99,7 @@ public class CharacterController : MonoBehaviour
     // Convertir le tableau en une chaîne lisible
     string messageString = string.Join("/ ", message);
     // Debug.Log($"Position envoyée : {messageString}");
-    udpServer.SendData(messageString, "127.0.0.1", 2500);
+    udpServer.SendData(messageString, "127.0.0.1", 25000);
   }
 
   private byte[] MessageToByte(string message) {

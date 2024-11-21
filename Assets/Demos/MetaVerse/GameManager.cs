@@ -18,11 +18,18 @@ public class GameManager : MonoBehaviour
             newCharacter.name = $"Character_{clientAddress}";
 
             CharacterController c = newCharacter.GetComponent<CharacterController>();
-            c.enabled = false;
 
-            
-            
-            Debug.Log("Je suis crée");
+            Debug.Log(c);
+            // if (c != null)
+            // {
+            //     c.enabled = false; // Désactiver le CharacterController
+            // }
+            // else
+            // {
+            //     Debug.LogWarning("CharacterController is missing on the instantiated prefab.");
+            // }
+
+            // Debug.Log("Je suis crée");
         }
     }
 }
