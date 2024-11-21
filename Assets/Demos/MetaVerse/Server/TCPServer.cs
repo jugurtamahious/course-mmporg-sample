@@ -31,6 +31,8 @@ public class TCPServer : MonoBehaviour
     public void Update()
     {
         string str = ReceiveTCP();
+        // Debug.Log(Clients.Count);
+
 
         if (str != null)
         {
@@ -73,7 +75,8 @@ public class TCPServer : MonoBehaviour
             string clientAddress = ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.ToString();
             Debug.Log("New connection received from: " + clientAddress);
             Clients.Add(tcpClient);
-            return $"New connection received from: {clientAddress}";
+
+            return clientAddress;
         }
 
         foreach (TcpClient client in Clients)
@@ -83,6 +86,7 @@ public class TCPServer : MonoBehaviour
             {
                 Debug.Log("Client disconnected");
                 Clients.Remove(client);
+                // Enlever son personnage
                 continue;
             }
 

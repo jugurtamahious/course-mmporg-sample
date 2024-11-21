@@ -33,15 +33,12 @@ public class CharacterController : MonoBehaviour
   // Start is called once before the first execution of Update after the MonoBehaviour is created
   void Start()
   {
-    
+
     Anim = GetComponent<Animator>();
     inputs = new MetaverseInput();
-    switch (Player)
-    {
-      case CharacterPlayer.Player1:
-        PlayerAction = inputs.Player1.Move;
-        break;
-    }
+    PlayerAction = inputs.Player1.Move;
+
+
 
     PlayerAction.Enable();
 
@@ -49,7 +46,7 @@ public class CharacterController : MonoBehaviour
 
     // Chemin du fichier JSON pour sauvegarder les données
     filePath = Path.Combine(Application.dataPath, "PlayerDataHistory.json");
-    Debug.Log($"Data will be saved to: {filePath}");
+    // Debug.Log($"Data will be saved to: {filePath}");
   }
 
   // Update is called once per frame
@@ -71,14 +68,13 @@ public class CharacterController : MonoBehaviour
 
     // Envoie des données
     // Debug.Log("Envoie données");
-    SendPositionToServer();
 
 
     RetrievePlayerData(newPosition, newRotation);
-    
+
     // Envoie de la position au serveur
     SendPositionToServer();
-    
+
     // Debug.Log(vec.y);
 
     //Debug.Log($"Player {Player} position: {newPosition}, walk: {vec.y}, rotate: {vec.x}");
@@ -92,19 +88,16 @@ public class CharacterController : MonoBehaviour
   private void SendPositionToServer()
   {
     Vector3 position = transform.position;
-    
-    
+
+
     float[] message = new float[] { position.x, position.y, position.z };
 
     // Convertir le tableau en une chaîne lisible
     string messageString = string.Join("/ ", message);
     // Debug.Log($"Position envoyée : {messageString}");
-    udpServer.SendData(messageString, "127.0.0.1", 25000);
-  }
 
-  private byte[] MessageToByte(string message) {
-    return System.Text.Encoding.UTF8.GetBytes(message);
-
+    // TODO : Remplacer par les données du serveur
+    udpServer.SendData(messageString, "127.0.0.1", 25001);
   }
 
   public void UpdatePositionFromServer(Vector3 newPos)
@@ -123,7 +116,7 @@ public class CharacterController : MonoBehaviour
     // Logique pour déterminer si c'est le joueur contrôlé localement
     return true; // Remplacez par votre logique de contrôle réseau
   }
-  
+
   void RetrievePlayerData(Vector3 position, Quaternion rotation)
   {
     float currentTime = Time.time; // Temps actuel dans Unity
