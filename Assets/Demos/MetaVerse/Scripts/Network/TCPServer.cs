@@ -8,7 +8,7 @@
 
         void Awake(){
             if (!Globals.IsServer) {
-                Destroy(this);
+               gameObject.SetActive(false);
             }
         }
         private void Start()

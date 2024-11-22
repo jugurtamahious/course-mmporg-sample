@@ -7,8 +7,9 @@ public class TCPClient : MonoBehaviour
     private TCPService tcpService;
 
     void Awake() {
+        // Desactiver mon objet si je ne suis pas le serveur
         if (Globals.IsServer) {
-            Destroy(this);
+            gameObject.SetActive(false);
         }
     }
 
