@@ -3,7 +3,6 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
-    public TCPServer Server; // Référence au serveur
     public GameObject CharacterPrefab; // Le Prefab du personnage
     public Transform SpawnArea; // Le point de spawn
     public UDPReceiver Receiver; // Référence au récepteur UDP
