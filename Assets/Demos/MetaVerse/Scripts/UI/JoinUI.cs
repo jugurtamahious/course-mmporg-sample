@@ -34,6 +34,8 @@ public class JoinUI : MonoBehaviour
         string ip = InpIp.text;
         int port = int.Parse(InpPort.text);
 
+        Globals.HostIP = ip;
+        Globals.HostPort = port;
         SetRole(false);
         StartGame();
 

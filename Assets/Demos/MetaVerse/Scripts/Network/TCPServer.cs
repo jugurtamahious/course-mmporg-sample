@@ -1,8 +1,5 @@
-using System;
-using System.Net;
-using System.Net.Sockets;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Net.Sockets;
 
 public class TCPServer : MonoBehaviour
 {
@@ -21,70 +18,26 @@ public class TCPServer : MonoBehaviour
     
     public void Start()
     {
+        tcpService = gameObject.AddComponent<TCPService>();
+        tcpService.OnMessageReceived += OnMessageReceived;
 
-    }
-
-    public void StartServer() {
-        Debug.Log("Server started");
-        _tcpListener = new TcpListener(IPAddress.Any, port);
-        _tcpListener.Start();
-        Debug.Log("TCP Server started on port " + port);
-    }
-
-    public void Update()
-    {
-        string str = ReceiveTCP();
-        // Debug.Log(Clients.Count);
-
-
-        if (str != null)
+        if (tcpService.StartServer(Globals.HostPort))
         {
-            Debug.Log("Je créé un player");
-            gm.OnNewClientConnected(str);
+            Debug.Log("Server started.");
         }
+        else
+        {
+            Debug.LogError("Failed to start server.");
+        }
+    }
+
+    private void OnMessageReceived(string message, TcpClient sender)
+    {
+        Debug.Log("Received message from client: " + message);
     }
 
     private void OnApplicationQuit()
     {
-        foreach (var client in Clients)
-        {
-            client.Close();
-        }
-        _tcpListener?.Stop();
+        tcpService.StopService();
     }
-
-    public string ReceiveTCP()
-    {
-        if (_tcpListener == null)
-        {
-            return null;
-        }
-
-         while (_tcpListener.Pending())
-        {
-            TcpClient tcpClient = _tcpListener.AcceptTcpClient();
-            string clientAddress = ((IPEndPoint)tcpClient.Client.RemoteEndPoint).Address.ToString();
-            Debug.Log("New connection received from: " + clientAddress);
-            Clients.Add(tcpClient);
-            return $"New connection received from: {clientAddress}";
-        }
-
-        foreach (TcpClient client in Clients){
-
-            if (!client.Connected) {
-                Debug.Log("Client disconnected");
-                Clients.Remove(client);
-                continue; 
-            }
-        }
-
-        return null; 
-    }
-
-     public string ParseString(byte[] bytes) {
-        string message = System.Text.Encoding.UTF8.GetString(bytes);
-        // OnMessageReceive.Invoke(message);
-        return message;
-    }
-   
 }

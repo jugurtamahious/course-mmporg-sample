@@ -1,10 +1,11 @@
-using System.Net.Sockets;
-using System.Text;
 using UnityEngine;
+using System.Net.Sockets;
 
 public class TCPClient : MonoBehaviour
 {
-    private TcpClient _tcpClient;
+
+    public GameManager GameManager;
+    private TCPService tcpService;
 
     void Awake() {
         // Desactiver mon objet si je ne suis pas le serveur
@@ -15,20 +16,31 @@ public class TCPClient : MonoBehaviour
 
     private void Start()
     {
+        tcpService = gameObject.AddComponent<TCPService>();
+        tcpService.OnMessageReceived += OnMessageReceived;
 
+        if (tcpService.ConnectToServer(Globals.HostIP, Globals.HostPort))
+        {
+            // Debug.Log("Connected to server.");
+        }
+        else
+        {
+            Debug.LogError("Failed to connect to server.");
+        }
     }
 
-    public void Connect(string ip, int port)
+    public void SendData(string message)
     {
-        Debug.Log("Connecting to " + ip + ":" + port);
-        _tcpClient = new TcpClient();
-        _tcpClient.Connect(ip, port);
-        Debug.Log("Connected to " + ip + ":" + port);
+        tcpService.SendTCPMessage(message);
     }
 
-    private void SendData(string message)
+    private void OnMessageReceived(string message, TcpClient sender)
     {
-        byte[] data = Encoding.UTF8.GetBytes(message);
-        _tcpClient.GetStream().Write(data, 0, data.Length);
+        Debug.Log("Message received from server: " + message);
+    }
+
+    private void OnApplicationQuit()
+    {
+        tcpService.StopService();
     }
 }

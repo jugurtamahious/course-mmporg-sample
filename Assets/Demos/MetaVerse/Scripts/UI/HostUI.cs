@@ -30,6 +30,8 @@ public class HostUI : MonoBehaviour
             return;
         }
 
+        Globals.HostIP = GetLocalIPAddress();
+        Globals.HostPort = port;
         SetRole(true);
         StartGame();
       
