@@ -3,9 +3,20 @@ using System.Net.Sockets;
 
 public class TCPServer : MonoBehaviour
 {
-    private TCPService tcpService;
 
-    private void Start()
+    private TcpListener _tcpListener;
+    private List<TcpClient> Clients = new List<TcpClient>();
+    public GameManager gm;
+    public int port = GameManager.HostPort;
+    
+    void Awake() {
+        // Desactiver mon objet si je ne suis pas le serveur
+        if (!Globals.IsServer) {
+            gameObject.SetActive(false);
+        }
+    }
+    
+    public void Start()
     {
         tcpService = gameObject.AddComponent<TCPService>();
         tcpService.OnMessageReceived += OnMessageReceived;
