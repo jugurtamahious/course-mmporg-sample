@@ -1,36 +1,47 @@
-using System;
 using System.Net;
-using System.Net.Sockets;
+using UnityEngine;
 
-public class UDPClient
+public class UDPClient : MonoBehaviour
 {
-    private UdpClient _udpClient;
-    private IPEndPoint _serverEndPoint;
+    public UDPService UDP;
+    public string ServerIP = "127.0.0.1";
+    public int ServerPort = 25000;
 
-    public void Start(string serverIp, int serverPort)
-    {
-        _udpClient = new UdpClient();
-        _serverEndPoint = new IPEndPoint(IPAddress.Parse(serverIp), serverPort);
+    private float NextCoucouTimeout = -1;
+    private IPEndPoint ServerEndpoint;
+
+    void Awake() {
+        // Desactiver mon objet si je ne suis pas le client
+        if (Globals.IsServer) {
+            gameObject.SetActive(false);
+        }
     }
 
-    public void SendPosition(float x, float y)
+    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    void Start()
     {
-        string message = $"{x},{y}";
-        byte[] data = System.Text.Encoding.UTF8.GetBytes(message);
-        _udpClient.Send(data, data.Length, _serverEndPoint);
+        UDP.InitClient();
+
+        ServerEndpoint = new IPEndPoint(IPAddress.Parse(ServerIP), ServerPort);
+            
+        UDP.OnMessageReceived += (string message, IPEndPoint sender) => {
+            Debug.Log("[CLIENT] Message received from " + 
+                sender.Address.ToString() + ":" + sender.Port 
+                + " =>" + message);
+        };
     }
 
-    public void ReceivePositions()
-    {
-        _udpClient.BeginReceive(OnReceive, null);
-    }
+    // Update is called once per frame
+    // void Update()
+    // {
+    //     if (Time.time > NextCoucouTimeout) {
+    //         UDP.SendUDPMessage("coucou", ServerEndpoint);
+    //         NextCoucouTimeout = Time.time + 0.5f;
+    //     }
+    // }
 
-    private void OnReceive(IAsyncResult result)
+     public void sendMesageToServer(string message)
     {
-        IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, 0);
-        byte[] data = _udpClient.EndReceive(result, ref serverEndPoint);
-
-        // Process received positions
-        _udpClient.BeginReceive(OnReceive, null);
+        UDP.SendUDPMessage(message, ServerEndpoint);
     }
 }

@@ -38,5 +38,7 @@ public class JoinUI : MonoBehaviour
 
         Client.Connect(ip, port);
         UI.SetActive(false);
+        
+        Globals.IsServer = false;
     }
 }

@@ -1,31 +1,51 @@
-using System;
+using System.Collections.Generic;
 using System.Net;
-using System.Net.Sockets;
 using UnityEngine;
 
-public class UDPServer: MonoBehaviour
+public class UDPServer : MonoBehaviour
 {
-    private UdpClient _udpServer;
-    public int port = 2500;
+    public UDPService UDP;
+    public int ListenPort = 25000;
 
-    public void Start()
-    {
-        _udpServer = new UdpClient(port);
-        _udpServer.BeginReceive(OnReceive, null);
-        Debug.Log("UDP Server listening on port " + port);
+    public Dictionary<string, IPEndPoint> Clients = new Dictionary<string, IPEndPoint>(); 
+
+    void Awake() {
+        // Desactiver mon objet si je ne suis pas le serveur
+        if (!Globals.IsServer) {
+            gameObject.SetActive(false);
+        }
     }
 
-    private void OnReceive(IAsyncResult result)
+    void Start()
     {
-        IPEndPoint clientEndPoint = new IPEndPoint(IPAddress.Any, 0);
-        byte[] data = _udpServer.EndReceive(result, ref clientEndPoint);
-        
-        // Process data (e.g., update player position)
-        _udpServer.BeginReceive(OnReceive, null);
+        UDP.Listen(ListenPort);
+
+        UDP.OnMessageReceived +=  
+            (string message, IPEndPoint sender) => {
+                Debug.Log("[SERVER] Message received from " + 
+                    sender.Address.ToString() + ":" + sender.Port 
+                    + " =>" + message);
+                
+                switch (message) {
+                    case "coucou":
+                        // Ajouter le client à mon dictionnaire
+                        string addr = sender.Address.ToString() + ":" + sender.Port;
+                        if (!Clients.ContainsKey(addr)) {
+                            Clients.Add(addr, sender);
+                        }
+                        Debug.Log("There are " + Clients.Count + " clients present.");
+
+                        UDP.SendUDPMessage("welcome!", sender);
+                        break;
+                }
+                
+                //@todo : do something with the message that has arrived! 
+            };
     }
 
-    public void SendData(byte[] data, IPEndPoint clientEndPoint)
-    {
-        _udpServer.Send(data, data.Length, clientEndPoint);
+    public void BroadcastUDPMessage(string message) {
+        foreach (KeyValuePair<string, IPEndPoint> client in Clients) {
+            UDP.SendUDPMessage(message, client.Value);
+        }
     }
 }

@@ -7,6 +7,7 @@ public class HostUI : MonoBehaviour
     public TMPro.TMP_InputField InpPort;
     public GameObject BtnConnect;
     public GameObject UI;
+    
     public int port = 25000;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -38,5 +39,9 @@ public class HostUI : MonoBehaviour
         Debug.Log("Connexion");
         Server.StartServer();
         UI.SetActive(false);
+
+        
+
+
     }
 }

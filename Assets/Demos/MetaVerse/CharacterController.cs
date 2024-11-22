@@ -16,6 +16,7 @@ public class CharacterController : MonoBehaviour
   public float WalkSpeed = 3;
   public float RotateSpeed = 250;
   public UDPServer udpServer;
+  public UDPClient uDPClient;
 
   Animator Anim;
   MetaverseInput inputs;
@@ -32,8 +33,7 @@ public class CharacterController : MonoBehaviour
 
   // Start is called once before the first execution of Update after the MonoBehaviour is created
   void Start()
-  {
-    
+  { 
     Anim = GetComponent<Animator>();
     inputs = new MetaverseInput();
     switch (Player)
@@ -71,10 +71,7 @@ public class CharacterController : MonoBehaviour
     
     // Envoie de la position au serveur
     SendPositionToServer();
-    
-    // Debug.Log(vec.y);
 
-    //Debug.Log($"Player {Player} position: {newPosition}, walk: {vec.y}, rotate: {vec.x}");
   }
 
   void OnDisable()
@@ -86,10 +83,8 @@ public class CharacterController : MonoBehaviour
   {
     Vector3 position = transform.position;
     string message = JsonUtility.ToJson(new { x = position.x, y = position.y, z = position.z });
-    byte[] messageByte = MessageToByte(message);
     
-    IPAddress targetAddress = IPAddress.Parse("127.0.0.1");
-    udpServer.SendData(messageByte, new IPEndPoint(targetAddress, 2500));
+    uDPClient.sendMesageToServer(message);
   }
 
   private byte[] MessageToByte(string message) {
