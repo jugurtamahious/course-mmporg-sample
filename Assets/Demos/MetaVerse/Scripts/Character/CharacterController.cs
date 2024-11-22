@@ -84,7 +84,7 @@ public class CharacterController : MonoBehaviour
     Vector3 position = transform.position;
     string message = JsonUtility.ToJson(new { x = position.x, y = position.y, z = position.z });
     
-    uDPClient.sendMesageToServer(message);
+    uDPClient.sendMesageToServer(position.ToString());
   }
 
   private byte[] MessageToByte(string message) {

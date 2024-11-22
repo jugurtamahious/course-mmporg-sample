@@ -11,8 +11,14 @@ public class TCPServer : MonoBehaviour
     private List<TcpClient> Clients = new List<TcpClient>();
     public GameManager gm;
     public int port = GameManager.HostPort;
-
-
+    
+    void Awake() {
+        // Desactiver mon objet si je ne suis pas le serveur
+        if (!Globals.IsServer) {
+            gameObject.SetActive(false);
+        }
+    }
+    
     public void Start()
     {
 

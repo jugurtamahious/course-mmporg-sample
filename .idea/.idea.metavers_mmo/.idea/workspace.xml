@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="925eabe3-1a9f-434e-914f-14ba7e63e14c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/Assets/Demos/MetaVerse/Client/UDPClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Demos/MetaVerse/Client/UDPClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Demos/MetaVerse/Global.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Demos/MetaVerse/Global.cs.meta" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Demos/MetaVerse/Scenes/MetaVerse.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Demos/MetaVerse/Scenes/MetaVerse.unity" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Demos/MetaVerse/Server/UDPServer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Demos/MetaVerse/Server/UDPServer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Assets/Settings/UniversalRenderPipelineGlobalSettings.asset" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Settings/UniversalRenderPipelineGlobalSettings.asset" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "git-widget-placeholder": "main/crashtest",
+    "node.js.selected.package.tslint": "(autodetect)"
+  }
+}]]></component>
+  <component name="TaskManager">
+    <servers />
+  </component>
+  <component name="UnityProjectConfiguration" hasMinimizedUI="true" />
+</project>

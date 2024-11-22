@@ -6,6 +6,13 @@ public class TCPClient : MonoBehaviour
 {
     private TcpClient _tcpClient;
 
+    void Awake() {
+        // Desactiver mon objet si je ne suis pas le serveur
+        if (Globals.IsServer) {
+            gameObject.SetActive(false);
+        }
+    }
+
     private void Start()
     {
 

@@ -34,10 +34,10 @@ public class UDPServer : MonoBehaviour
                             Clients.Add(addr, sender);
                         }
                         Debug.Log("There are " + Clients.Count + " clients present.");
-
-                        UDP.SendUDPMessage("welcome!", sender);
                         break;
                 }
+
+                 UDP.SendUDPMessage("welcome !", sender);
                 
                 //@todo : do something with the message that has arrived! 
             };
