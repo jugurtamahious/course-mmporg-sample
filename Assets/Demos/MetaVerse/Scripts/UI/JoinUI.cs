@@ -22,7 +22,7 @@ public class JoinUI : MonoBehaviour
 
     }
 
-    public void OnConnect()
+     public void OnConnect()
     {
         // Vérification si le port est un int
         if (!int.TryParse(InpPort.text, out this.port))
@@ -34,6 +34,8 @@ public class JoinUI : MonoBehaviour
         string ip = InpIp.text;
         int port = int.Parse(InpPort.text);
 
+        Globals.HostIP = ip;
+        Globals.HostPort = port;
         SetRole(false);
         StartGame();
 

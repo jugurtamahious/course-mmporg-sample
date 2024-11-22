@@ -21,7 +21,7 @@ public class HostUI : MonoBehaviour
     {
     }
 
-    public void Connexion()
+     public void Connexion()
     {
         // Vérification si le port est un int
         if (!int.TryParse(InpPort.text, out port))
@@ -30,6 +30,8 @@ public class HostUI : MonoBehaviour
             return;
         }
 
+        Globals.HostIP = GetLocalIPAddress();
+        Globals.HostPort = port;
         SetRole(true);
         StartGame();
       
@@ -62,4 +64,5 @@ public class HostUI : MonoBehaviour
             return $"Erreur : {ex.Message}";
         }
     }
+   
 }

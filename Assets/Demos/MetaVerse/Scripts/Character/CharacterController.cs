@@ -145,7 +145,6 @@ public class CharacterController : MonoBehaviour
     }
   }
 
-
 }
 
 // Classe pour structurer les données du joueur
