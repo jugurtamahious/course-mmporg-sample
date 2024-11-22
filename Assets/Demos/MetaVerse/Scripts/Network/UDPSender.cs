@@ -13,7 +13,7 @@ public class UDPSender : MonoBehaviour
     private void Start()
     {
         udpClient = new UdpClient();
-        Debug.Log("UDP Sender initialisé");
+        // Debug.Log("UDP Sender initialisé");
     }
 
     public void SendData(string message, string serverIp, int serverPorts)

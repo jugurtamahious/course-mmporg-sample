@@ -6,7 +6,7 @@ using System;
 
 public class UDPReceiver : MonoBehaviour
 {
-    public int port = 25004;
+    // public int port = 25004;
     private UdpClient udpClient;
 
     void Start()
@@ -16,9 +16,9 @@ public class UDPReceiver : MonoBehaviour
 
     public void StartServer()
     {
-        udpClient = new UdpClient(port);
-        Debug.Log($"Serveur UDP démarré sur le port {port}");
-        StartListening();
+        // udpClient = new UdpClient(port);
+        // Debug.Log($"Serveur UDP démarré sur le port {port}");
+        // StartListening();
     }
 
     public void StartListening()

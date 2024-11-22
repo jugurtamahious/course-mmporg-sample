@@ -37,7 +37,7 @@ public class CharacterController : MonoBehaviour
   // Start is called once before the first execution of Update after the MonoBehaviour is created
   void Start()
   {
-    Debug.Log(Globals.IsServer);
+    // Debug.Log(Globals.IsServer);
     Anim = GetComponent<Animator>();
     inputs = new MetaverseInput();
     PlayerAction = inputs.Player1.Move;
@@ -47,7 +47,7 @@ public class CharacterController : MonoBehaviour
 
         // Chemin du fichier JSON pour sauvegarder les données
         filePath = Path.Combine(Application.dataPath, "PlayerDataHistory.json");
-        Debug.Log($"Data will be saved to: {filePath}");
+        // Debug.Log($"Data will be saved to: {filePath}");
 
     }
 
@@ -106,7 +106,7 @@ public class CharacterController : MonoBehaviour
         // Debug.Log($"Position envoyée : {messageString}");
         // udpServer.SendData(messageString, "127.0.0.1", 25000);
 
-        Debug.Log(messageString);
+        // Debug.Log(messageString);
 
     }
 
