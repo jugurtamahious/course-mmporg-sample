@@ -38,22 +38,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        // Envoie périodique des états aux clients
-        BroadcastStateToClients();
-    }
-
-    private void BroadcastStateToClients()
-    {
-        // Exemple de données envoyées aux clients (à adapter selon le jeu)
-        foreach (var client in clientCharacters)
-        {
-            string clientAddress = client.Key;
-            GameObject character = client.Value;
-
-            string stateMessage = $"{clientAddress}:{character.transform.position.x},{character.transform.position.y},{character.transform.position.z}";
-            // tcpService.SendTCPMessage(stateMessage, null);
-            // Debug.Log(stateMessage);
-        }
+        
     }
 
     // Gestion de l'événement lorsqu'un message est reçu via TCP
@@ -67,7 +52,7 @@ public class GameManager : MonoBehaviour
         }
         else if (message == "disconnect")
         {
-            RemoveClient(clientAddress);
+            // RemoveClient(clientAddress);
         }
         else
         {
@@ -121,13 +106,5 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning($"Aucun personnage trouvé pour {clientAddress}");
         }
-    }
-
-    private void OnApplicationQuit()
-    {
-        // Arrêter le service TCP
-        tcpService.StopService();
-        tcpService.OnClientConnected -= OnNewClientConnected;
-
     }
 }

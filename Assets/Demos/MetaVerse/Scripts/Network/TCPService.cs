@@ -16,7 +16,7 @@ public class TCPService : MonoBehaviour
     /**
     * Gestion des variables publiques
     */
-    public GameManager gameManager;
+    public GameManager GameManager;
 
     /**
     * Définition des événements
@@ -127,20 +127,8 @@ public class TCPService : MonoBehaviour
         }
     }
 
-    private void Update()
-    {
-        if (isServer)
-        {
-            // Affichage de la liste des clients connectés
-            DisplayConnectedClients();
-            AcceptClients();
-        }
-
-        ReceiveTCPMessages();
-    }
-
     // Acceptation des nouveaux clients (serveur uniquement)
-    private void AcceptClients()
+    public void AcceptClients()
     {
         if (tcpListener == null || !tcpListener.Pending()) return;
 
@@ -162,7 +150,7 @@ public class TCPService : MonoBehaviour
     }
 
     // Réception des messages (serveur ou client)
-    private void ReceiveTCPMessages()
+    public void ReceiveTCPMessages()
     {
         try
         {
@@ -202,7 +190,7 @@ public class TCPService : MonoBehaviour
     }
 
     // Méthode pour afficher les clients connectés en temps réel
-    private void DisplayConnectedClients()
+    public void DisplayConnectedClients()
     {
         StringBuilder clientList = new StringBuilder("Clients connectés: ");
 
@@ -212,6 +200,12 @@ public class TCPService : MonoBehaviour
             clientList.Append(clientAddress + " ");
         }
 
-        // Debug.Log(clients.ToString() + " | Nombre de clients: " + clients.Count);
+        Debug.Log(clients.ToString() + " | Nombre de clients: " + clients.Count);
+    }
+
+    // Méthode pour supprimer les clients déconnectés de la liste
+    public void RemoveDisconnectedClients(/* Client */)
+    {
+        // clients.Remove(client);
     }
 }

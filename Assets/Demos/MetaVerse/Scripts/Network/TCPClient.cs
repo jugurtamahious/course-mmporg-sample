@@ -4,8 +4,13 @@ using System.Net.Sockets;
 public class TCPClient : MonoBehaviour
 {
 
-    public GameManager GameManager;
     private TCPService tcpService;
+
+    void Awake() {
+        if (Globals.IsServer) {
+            Destroy(this);
+        }
+    }
 
     private void Start()
     {
@@ -22,6 +27,15 @@ public class TCPClient : MonoBehaviour
         }
     }
 
+    void Update() { 
+        // Supprimer les clients déconnectés
+        tcpService.RemoveDisconnectedClients();
+
+        // Réception des messages
+        tcpService.ReceiveTCPMessages();
+
+    }
+
     public void SendData(string message)
     {
         tcpService.SendTCPMessage(message);
@@ -30,10 +44,5 @@ public class TCPClient : MonoBehaviour
     private void OnMessageReceived(string message, TcpClient sender)
     {
         Debug.Log("Message received from server: " + message);
-    }
-
-    private void OnApplicationQuit()
-    {
-        tcpService.StopService();
     }
 }

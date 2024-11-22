@@ -1,32 +1,61 @@
-using UnityEngine;
-using System.Net.Sockets;
+    using UnityEngine;
+    using System.Net.Sockets;
 
-public class TCPServer : MonoBehaviour
-{
-    private TCPService tcpService;
-
-    private void Start()
+    public class TCPServer : MonoBehaviour
     {
-        tcpService = gameObject.AddComponent<TCPService>();
-        tcpService.OnMessageReceived += OnMessageReceived;
+        private TCPService tcpService;
+        public GameManager GameManager;
 
-        if (tcpService.StartServer(Globals.HostPort))
-        {
-            Debug.Log("Server started.");
+        void Awake(){
+            if (!Globals.IsServer) {
+                Destroy(this);
+            }
         }
-        else
+        private void Start()
         {
-            Debug.LogError("Failed to start server.");
+            tcpService = gameObject.AddComponent<TCPService>();
+            tcpService.OnMessageReceived += OnMessageReceived;
+            tcpService.OnClientConnected += OnClientConnected;
+
+            if (tcpService.StartServer(Globals.HostPort))
+            {
+                Debug.Log("Server started.");
+            }
+            else
+            {
+                Debug.LogError("Failed to start server.");
+            }
+
+        }
+
+        public void Update() {
+            
+            // Affichage de la liste des clients connectés
+            tcpService.DisplayConnectedClients();
+
+            // Acceptation des nouveaux clients
+            tcpService.AcceptClients();
+
+            // Supprimer les clients déconnectés
+            tcpService.RemoveDisconnectedClients();
+
+            // Réception des messages
+            tcpService.ReceiveTCPMessages();
+        }
+
+        private void OnMessageReceived(string message, TcpClient sender)
+        {
+            Debug.Log("Received message from client: " + message);
+        }
+
+        private void OnClientConnected(string client)
+        {
+            // Création du personnage du client
+            GameManager.OnNewClientConnected(client);
+        }
+
+        private void OnApplicationQuit()
+        {
+            tcpService.StopService();
         }
     }
-
-    private void OnMessageReceived(string message, TcpClient sender)
-    {
-        Debug.Log("Received message from client: " + message);
-    }
-
-    private void OnApplicationQuit()
-    {
-        tcpService.StopService();
-    }
-}
