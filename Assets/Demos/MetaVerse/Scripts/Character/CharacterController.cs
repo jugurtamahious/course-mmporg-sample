@@ -34,14 +34,14 @@ public class CharacterController : MonoBehaviour
 
     private string filePath;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-
-        Anim = GetComponent<Animator>();
-        inputs = new MetaverseInput();
-        PlayerAction = inputs.Player1.Move;
-        PlayerAction.Enable();
+  // Start is called once before the first execution of Update after the MonoBehaviour is created
+  void Start()
+  {
+    Debug.Log(Globals.IsServer);
+    Anim = GetComponent<Animator>();
+    inputs = new MetaverseInput();
+    PlayerAction = inputs.Player1.Move;
+    PlayerAction.Enable();
 
         rb = GetComponent<Rigidbody>();
 

@@ -1,15 +1,13 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using System.Net;
+using UnityEngine.SceneManagement;
 
 public class HostUI : MonoBehaviour
 {
-    public TCPServer Server;
-    // public UDPSender UDPSender;
     public TMPro.TMP_InputField InpPort;
     public GameObject BtnConnect;
     public GameObject UI;
-    public GameManager GameManager;
     public int port = 25000;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -32,20 +30,17 @@ public class HostUI : MonoBehaviour
             return;
         }
 
+        SetRole(true);
+        StartGame();
+      
+    }
+    
+    public void SetRole(bool isServer) {
+        Globals.IsServer = isServer;
+    }
 
-        // Changement du port 
-        Server.port = port;
-
-        string localIP = GetLocalIPAddress();
-
-
-        GameManager.HostPort = port;
-        GameManager.HostIP = localIP;
-
-        // Démarrage du server
-        Debug.Log("Connexion");
-        Server.StartServer();
-        UI.SetActive(false);
+    public void StartGame() {
+        SceneManager.LoadScene("MetaVerse");
     }
 
     private string GetLocalIPAddress()
