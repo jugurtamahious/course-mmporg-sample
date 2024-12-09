@@ -10,7 +10,6 @@ public class UDPServer : MonoBehaviour
     public Dictionary<string, IPEndPoint> Clients = new Dictionary<string, IPEndPoint>(); 
 
     void Awake() {
-        // Desactiver mon objet si je ne suis pas le serveur
         if (!Globals.IsServer) {
             gameObject.SetActive(false);
         }
@@ -37,9 +36,8 @@ public class UDPServer : MonoBehaviour
                         break;
                 }
 
-                 UDP.SendUDPMessage("welcome !", sender);
+                 UDP.SendUDPMessage(message, sender);
                 
-                //@todo : do something with the message that has arrived! 
             };
     }
 
