@@ -54,6 +54,7 @@ public class HostUI : MonoBehaviour
             {
                 if (ip.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
                 {
+                    // Debug.Log(ip.ToString());
                     return ip.ToString();
                 }
             }
