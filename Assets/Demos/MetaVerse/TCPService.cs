@@ -7,6 +7,9 @@ using UnityEngine;
 
 public class TCPService : MonoBehaviour
 {
+    /** 
+    * Gestion des variables privées
+    */
     private bool isServer = Globals.IsServer;
     private TcpListener tcpListener;
     private TcpClient tcpClient;
@@ -16,6 +19,7 @@ public class TCPService : MonoBehaviour
     /**
     * Gestion des variables publiques
     */
+
     public GameManager GameManager;
 
     /**
@@ -31,12 +35,15 @@ public class TCPService : MonoBehaviour
     public delegate void RemoveClient(string ip);
     public event RemoveClient OnClientRemoved;
 
+    /**
+    * Fonctions
+    */
+
+    // Vérification de la présence des joueurs
     public void Update()
     {
-        RemoveDisconnectedClients();
     }
 
-    // Démarrer le serveur
     public bool StartServer(int port)
     {
         try
@@ -54,10 +61,9 @@ public class TCPService : MonoBehaviour
         }
     }
 
-    // Arrêter le serveur ou le client
     public void StopService()
     {
-        if (isServer)
+        if (Globals.IsServer)
         {
             foreach (var client in clients)
             {
@@ -95,46 +101,6 @@ public class TCPService : MonoBehaviour
         }
     }
 
-    // Envoi de message (client ou serveur)
-    public void SendTCPMessage(string message, TcpClient specificClient = null)
-    {
-        try
-        {
-            byte[] data = Encoding.UTF8.GetBytes(message);
-
-            if (isServer)
-            {
-                // Envoi à un client spécifique ou à tous les clients
-                if (specificClient != null)
-                {
-                    specificClient.GetStream().Write(data, 0, data.Length);
-                }
-                else
-                {
-                    foreach (var client in clients)
-                    {
-                        client.GetStream().Write(data, 0, data.Length);
-                    }
-                }
-            }
-            else
-            {
-                if (tcpClient != null && tcpClient.Connected)
-                {
-                    networkStream.Write(data, 0, data.Length);
-                }
-                else
-                {
-                    Debug.LogWarning("Client not connected to any server.");
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogWarning("Error sending message: " + ex.Message);
-        }
-    }
-
     // Acceptation des nouveaux clients (serveur uniquement)
     public void AcceptClients()
     {
@@ -157,47 +123,7 @@ public class TCPService : MonoBehaviour
         }
     }
 
-    // Réception des messages (serveur ou client)
-    public void ReceiveTCPMessages()
-    {
-        try
-        {
-            if (isServer)
-            {
-                // Serveur : écouter chaque client
-                foreach (var client in new List<TcpClient>(clients))
-                {
-                    if (client.Available > 0)
-                    {
-                        NetworkStream stream = client.GetStream();
-                        byte[] buffer = new byte[1024];
-                        int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                        string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                        OnMessageReceived?.Invoke(message, client);
-                    }
-                }
-            }
-            else
-            {
-                // Client : écouter uniquement le serveur
-                if (tcpClient != null && networkStream != null && networkStream.DataAvailable)
-                {
-                    byte[] buffer = new byte[1024];
-                    int bytesRead = networkStream.Read(buffer, 0, buffer.Length);
-                    string message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-
-                    OnMessageReceived?.Invoke(message, tcpClient);
-                }
-            }
-        }
-        catch (Exception ex)
-        {
-            Debug.LogWarning("Error receiving message: " + ex.Message);
-        }
-    }
-
-    // Méthode pour afficher les clients connectés en temps réel
+    // Méthode pour afficher les clients connectés en temps réel (debug)
     public void DisplayConnectedClients()
     {
         StringBuilder clientList = new StringBuilder("Clients connectés: ");
@@ -226,13 +152,11 @@ public class TCPService : MonoBehaviour
                 {
                     // Le client est déconnecté
                     string ip = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
-                    Debug.Log("Client déconnecté : " + ip);
 
                     // Notifier les abonnés de l'événement
                     OnClientRemoved?.Invoke(ip);
 
-                    Debug.Log("Client déconnecté 3 : " + ip);
-
+                    // Supprimer le client de la liste
                     clients.RemoveAt(i);
                     client.Close();
                 }
@@ -249,6 +173,7 @@ public class TCPService : MonoBehaviour
         if (clients.Count == 0) {
             return "Aucun client connecté";
         }
+        
         string str = "";
 
         foreach (var client in clients) {

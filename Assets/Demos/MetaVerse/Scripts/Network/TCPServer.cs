@@ -14,7 +14,8 @@
         private void Start()
         {
             tcpService = gameObject.AddComponent<TCPService>();
-            tcpService.OnMessageReceived += OnMessageReceived;
+
+            // Gestion des events
             tcpService.OnClientConnected += OnClientConnected;
             tcpService.OnClientRemoved += OnClientRemoved;
 
@@ -39,14 +40,6 @@
 
             // Supprimer les clients déconnectés
             tcpService.RemoveDisconnectedClients();
-
-            // Réception des messages
-            tcpService.ReceiveTCPMessages();
-        }
-
-        private void OnMessageReceived(string message, TcpClient sender)
-        {
-            Debug.Log("Received message from client: " + message);
         }
 
         private void OnClientConnected(string client)
