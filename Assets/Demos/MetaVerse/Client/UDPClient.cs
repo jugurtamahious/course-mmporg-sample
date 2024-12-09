@@ -7,6 +7,8 @@ public class UDPClient : MonoBehaviour
     public string ServerIP = "127.0.0.1";
     public int ServerPort = 25000;
 
+    public GameManager gameManager;
+
     private float NextCoucouTimeout = -1;
     private IPEndPoint ServerEndpoint;
 
@@ -28,7 +30,10 @@ public class UDPClient : MonoBehaviour
             Debug.Log("[CLIENT] Message received from " + 
                 sender.Address.ToString() + ":" + sender.Port 
                 + " =>" + message);
+
+                 gameManager.OnNewClientConnected(ServerEndpoint.ToString());
         };
+
     }
 
     // Update is called once per frame

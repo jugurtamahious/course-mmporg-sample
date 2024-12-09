@@ -73,8 +73,12 @@ public class GameManager : MonoBehaviour
 
         // Supprimer toute instance existante pour ce client
         OnRemoveClient(clientAddress);
+        SpawnClient(clientAddress);
+       
+    }
 
-        // Instancier un nouveau personnage à l'endroit défini par SpawnArea
+    public void SpawnClient(string clientAddress){
+         // Instancier un nouveau personnage à l'endroit défini par SpawnArea
         if (CharacterPrefab != null && SpawnArea != null)
         {
             GameObject newCharacter = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);

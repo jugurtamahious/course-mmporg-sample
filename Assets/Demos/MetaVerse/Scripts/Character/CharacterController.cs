@@ -58,18 +58,14 @@ public class CharacterController : MonoBehaviour
     Vector2 vec = PlayerAction.ReadValue<Vector2>();
     Anim.SetFloat("Walk", vec.y);
 
-    // Mise à jour de la position
     Vector3 newPosition = rb.position + transform.forward * WalkSpeed * Time.fixedDeltaTime * vec.y;
     rb.MovePosition(newPosition);
 
-    // Mise à jour de la rotation
     Quaternion newRotation = rb.rotation * Quaternion.AngleAxis(RotateSpeed * Time.fixedDeltaTime * vec.x, Vector3.up);
     rb.MoveRotation(newRotation);
 
-    // Récupérer les données du joueur
     RetrievePlayerData(newPosition, newRotation);
     
-    // Envoie de la position au serveur
     SendPositionToServer();
 
   }
