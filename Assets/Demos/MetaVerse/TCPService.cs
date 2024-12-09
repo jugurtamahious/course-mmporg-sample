@@ -28,10 +28,14 @@ public class TCPService : MonoBehaviour
     public delegate void TCPMessageReceived(string message, TcpClient sender);
     public event TCPMessageReceived OnMessageReceived;
 
-    public void Update() {
+    public delegate void RemoveClient(string ip);
+    public event RemoveClient OnClientRemoved;
+
+    public void Update()
+    {
         RemoveDisconnectedClients();
     }
-    
+
     // Démarrer le serveur
     public bool StartServer(int port)
     {
@@ -221,7 +225,14 @@ public class TCPService : MonoBehaviour
                 if (client.Client.Poll(0, SelectMode.SelectRead) && client.Available == 0)
                 {
                     // Le client est déconnecté
-                    Debug.Log($"Client déconnecté : {((IPEndPoint)client.Client.RemoteEndPoint).Address}");
+                    string ip = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
+                    Debug.Log("Client déconnecté : " + ip);
+
+                    // Notifier les abonnés de l'événement
+                    OnClientRemoved?.Invoke(ip);
+
+                    Debug.Log("Client déconnecté 3 : " + ip);
+
                     clients.RemoveAt(i);
                     client.Close();
                 }
