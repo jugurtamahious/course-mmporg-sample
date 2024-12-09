@@ -16,6 +16,7 @@
             tcpService = gameObject.AddComponent<TCPService>();
             tcpService.OnMessageReceived += OnMessageReceived;
             tcpService.OnClientConnected += OnClientConnected;
+            tcpService.OnClientRemoved += OnClientRemoved;
 
             if (tcpService.StartServer(Globals.HostPort))
             {
@@ -52,6 +53,10 @@
         {
             // Création du personnage du client
             GameManager.OnNewClientConnected(client);
+        }
+
+        private void OnClientRemoved(string ip) {
+            GameManager.OnRemoveClient(ip);
         }
 
         private void OnApplicationQuit()

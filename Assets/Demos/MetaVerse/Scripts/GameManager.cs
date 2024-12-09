@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
         // Abonnement aux évenements
         tcpService.OnMessageReceived += OnMessageReceived;
         tcpService.OnClientConnected += OnNewClientConnected;
+        
 
         tcpService.StartServer(Globals.HostPort);
 
@@ -71,7 +72,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Nouveau client connecté : {clientAddress}");
 
         // Supprimer toute instance existante pour ce client
-        RemoveClient(clientAddress);
+        OnRemoveClient(clientAddress);
         SpawnClient(clientAddress);
        
     }
@@ -96,8 +97,10 @@ public class GameManager : MonoBehaviour
 
 
     // Gestion de la suppression d'un client
-    public void RemoveClient(string clientAddress)
+    public void OnRemoveClient(string clientAddress)
     {
+
+        Debug.Log("Client déconnecté 2 : " + clientAddress);
 
         // Regarde si l'instance du joueur existe
         if (clientCharacters.TryGetValue(clientAddress, out GameObject character))
