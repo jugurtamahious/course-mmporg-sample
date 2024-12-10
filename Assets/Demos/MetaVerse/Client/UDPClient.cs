@@ -16,6 +16,8 @@ public class UDPClient : MonoBehaviour
     private float NextCoucouTimeout = -1;
     private IPEndPoint ServerEndpoint;
 
+    private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
+
     void Awake()
     {
         if (Globals.IsServer)
@@ -39,12 +41,14 @@ public class UDPClient : MonoBehaviour
 
     private void OnMessageReceived(string message, IPEndPoint sender)
     {
-        string PlayerID = sender.Address.ToString() + ":" + sender.Port.ToString();
         Debug.Log("[CLIENT] Message received from " +
             sender.Address.ToString() + ":" + sender.Port
             + " =>" + message);
+
+        PlayerMessage playerMessage = JsonUtility.FromJson<PlayerMessage>(message);
+        // Passer le playerID à la méthode MovePlayer
+        MovePlayer(message, playerMessage.playerID);
         //  gameManager.OnNewClientConnected(ServerEndpoint.ToString());
-        MovePlayer(message, PlayerID);
 
 
     }
@@ -52,22 +56,24 @@ public class UDPClient : MonoBehaviour
     public void MovePlayer(string message, string playerID)
     {
 
-        Dictionary<string, GameObject> players = gameManager.getClientCharacters();
-
         try
         {
             CharacterUpdate positionData = JsonUtility.FromJson<CharacterUpdate>(message);
 
             if (players.ContainsKey(playerID))
             {
-                players[playerID].transform.position = positionData.position;
-            } else
+                if (Globals.playerID != playerID)
+                {
+                    players[playerID].transform.position = positionData.position;
+                }
+            }
+            else
             {
                 GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
                 newPlayer.transform.position = positionData.position;
                 players.Add(playerID, newPlayer);
             }
-            
+
         }
         catch (System.Exception ex)
         {
@@ -78,5 +84,21 @@ public class UDPClient : MonoBehaviour
     public void sendMesageToServer(string message)
     {
         UDP.SendUDPMessage(message, ServerEndpoint);
+    }
+
+
+    [System.Serializable]
+    public class PlayerMessage
+    {
+        public string playerID;
+        public Position position;
+    }
+
+    [System.Serializable]
+    public class Position
+    {
+        public float x;
+        public float y;
+        public float z;
     }
 }
