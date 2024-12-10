@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
         Debug.Log($"Nouveau client connecté : {clientAddress}");
 
         // Supprimer toute instance existante pour ce client
-        RemoveClient(clientAddress);
+        OnRemoveClient(clientAddress);
         // SpawnClient(clientAddress);
        
     }
@@ -94,6 +94,11 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogWarning("CharacterPrefab ou SpawnArea n'est pas défini.");
         }
+    }
+
+    public Dictionary<string, GameObject> getClientCharacters()
+    {
+        return clientCharacters;
     }
 
 

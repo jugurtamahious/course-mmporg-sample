@@ -4,13 +4,11 @@ using System.Collections.Generic;
 
 public class UDPClient : MonoBehaviour
 {
-    public UDPService UDP;
+    private UDPService UDP;
     public string ServerIP = "127.0.0.1";
     public int ServerPort = 25000;
-    
-    private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
-    
-    public GameObject CharacterPrefab; // Le Prefab du personnage
+
+    public GameObject CharacterPrefab;
     public Transform SpawnArea;
 
     public GameManager gameManager;
@@ -18,30 +16,44 @@ public class UDPClient : MonoBehaviour
     private float NextCoucouTimeout = -1;
     private IPEndPoint ServerEndpoint;
 
-    void Awake() {
-        if (Globals.IsServer) {
+    void Awake()
+    {
+        if (Globals.IsServer)
+        {
             gameObject.SetActive(false);
         }
     }
-  
+
     void Start()
     {
+
+        UDP = gameObject.AddComponent<UDPService>();
+
         UDP.InitClient();
 
-        ServerEndpoint = new IPEndPoint(IPAddress.Parse(ServerIP), ServerPort);
-            
-        UDP.OnMessageReceived += (string message, IPEndPoint sender) => {
-            string PlayerID = sender.Address.ToString() + ":" + sender.Port.ToString();
-            Debug.Log("[CLIENT] Message received from " + 
-                sender.Address.ToString() + ":" + sender.Port 
-                + " =>" + message);
-                //  gameManager.OnNewClientConnected(ServerEndpoint.ToString());
-                  MovePlayer(message, PlayerID); 
-        };
+        ServerEndpoint = new IPEndPoint(IPAddress.Parse(Globals.HostIP), Globals.HostPort);
+
+        UDP.OnMessageReceived += OnMessageReceived;
 
     }
 
-      public void MovePlayer(string message , string playerID) {
+    private void OnMessageReceived(string message, IPEndPoint sender)
+    {
+        string PlayerID = sender.Address.ToString() + ":" + sender.Port.ToString();
+        Debug.Log("[CLIENT] Message received from " +
+            sender.Address.ToString() + ":" + sender.Port
+            + " =>" + message);
+        //  gameManager.OnNewClientConnected(ServerEndpoint.ToString());
+        MovePlayer(message, PlayerID);
+
+
+    }
+
+    public void MovePlayer(string message, string playerID)
+    {
+
+        Dictionary<string, GameObject> players = gameManager.getClientCharacters();
+
         try
         {
             CharacterUpdate positionData = JsonUtility.FromJson<CharacterUpdate>(message);
@@ -49,13 +61,13 @@ public class UDPClient : MonoBehaviour
             if (players.ContainsKey(playerID))
             {
                 players[playerID].transform.position = positionData.position;
-            }
-            else
+            } else
             {
                 GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
                 newPlayer.transform.position = positionData.position;
                 players.Add(playerID, newPlayer);
             }
+            
         }
         catch (System.Exception ex)
         {
@@ -63,7 +75,7 @@ public class UDPClient : MonoBehaviour
         }
     }
 
-     public void sendMesageToServer(string message)
+    public void sendMesageToServer(string message)
     {
         UDP.SendUDPMessage(message, ServerEndpoint);
     }
