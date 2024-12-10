@@ -18,7 +18,7 @@ public class GameManager : MonoBehaviour
         // Abonnement aux évenements
         tcpService.OnMessageReceived += OnMessageReceived;
         tcpService.OnClientConnected += OnNewClientConnected;
-        
+
 
         tcpService.StartServer(Globals.HostPort);
 
@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        
+
     }
 
     // Gestion de l'événement lorsqu'un message est reçu via TCP
@@ -74,11 +74,12 @@ public class GameManager : MonoBehaviour
         // Supprimer toute instance existante pour ce client
         OnRemoveClient(clientAddress);
         SpawnClient(clientAddress);
-       
+
     }
 
-    public void SpawnClient(string clientAddress){
-         // Instancier un nouveau personnage à l'endroit défini par SpawnArea
+    public void SpawnClient(string clientAddress)
+    {
+        // Instancier un nouveau personnage à l'endroit défini par SpawnArea
         if (CharacterPrefab != null && SpawnArea != null)
         {
             GameObject newCharacter = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
