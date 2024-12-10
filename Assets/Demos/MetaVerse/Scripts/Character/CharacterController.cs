@@ -21,13 +21,12 @@ public class CharacterController : MonoBehaviour
     private InputAction PlayerAction;
     private Rigidbody rb;
 
-    private bool isLocalPlayer = true; // Contrôle local ou spectateur
+    private bool isLocalPlayer = true;
 
-    private string playerID; // Identifiant unique du joueur
+    private string playerID;
 
     private void Awake()
     {
-        // Si c'est le serveur, désactiver les mouvements et les personnages
         if (Globals.IsServer)
         {
             isLocalPlayer = false; // Le serveur ne contrôle pas de personnage
@@ -82,9 +81,10 @@ public class CharacterController : MonoBehaviour
             playerID = playerID,
             position = transform.position
         };
+        
 
         string message = JsonUtility.ToJson(update);
-        udpClient?.sendMesageToServer(message); // Envoyer au serveur uniquement si udpClient est configuré
+        udpClient.sendMesageToServer(message); // Envoyer au serveur uniquement si udpClient est configuré
     }
 
     public void SetLocalPlayer(bool isLocal)
