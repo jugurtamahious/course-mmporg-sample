@@ -8,6 +8,9 @@ public class UDPClient : MonoBehaviour
     public string ServerIP = "127.0.0.1";
     public int ServerPort = 25000;
 
+    public GameObject CharacterPrefab;
+    public Transform SpawnArea;
+
     public GameManager gameManager;
 
     private float NextCoucouTimeout = -1;
@@ -58,6 +61,11 @@ public class UDPClient : MonoBehaviour
             if (players.ContainsKey(playerID))
             {
                 players[playerID].transform.position = positionData.position;
+            } else
+            {
+                GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
+                newPlayer.transform.position = positionData.position;
+                players.Add(playerID, newPlayer);
             }
             
         }
