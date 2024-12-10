@@ -48,6 +48,7 @@ public class CharacterController : MonoBehaviour
 
         // Générer un identifiant unique pour chaque joueur
         playerID = "Player" + UnityEngine.Random.Range(1000, 9999).ToString();
+        Globals.playerID = playerID;
         Debug.Log("Player ID: " + playerID);
     }
 
