@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UDPServer : MonoBehaviour
 {
-    public UDPService UDP;
+    private UDPService UDP;
     public int ListenPort = 25000;
     public GameObject CharacterPrefab;
     public Transform SpawnArea;
@@ -22,6 +22,8 @@ public class UDPServer : MonoBehaviour
 
     void Start()
     {
+        UDP = gameObject.AddComponent<UDPService>();
+
         UDP.Listen(ListenPort);
 
         UDP.OnMessageReceived += (string message, IPEndPoint sender) =>
