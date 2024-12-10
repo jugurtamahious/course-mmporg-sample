@@ -6,30 +6,22 @@ public class GameManager : MonoBehaviour
 {
     public GameObject CharacterPrefab; // Le Prefab du personnage
     public Transform SpawnArea; // Le point de spawn
-    private TCPService tcpService; // Service TCP pour gérer les connexions
-
     private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
 
     void Start()
     {
-        // Démarrage du serveur TCP
-        tcpService = gameObject.AddComponent<TCPService>();
+        Debug.Log("GameManager est instanciée");
 
-        // Abonnement aux évenements
-        tcpService.OnMessageReceived += OnMessageReceived;
-        tcpService.OnClientConnected += OnNewClientConnected;
-        
+        // Mettre l'instance du joueur existant (local) dans le dictionnaire
+        GameObject localPlayer = GameObject.FindWithTag("localPlayer");
 
-        tcpService.StartServer(Globals.HostPort);
 
-        Debug.Log("GameManager démarré en mode serveur");
+        if (localPlayer != null)
+        {   
+            // Server
+            clientCharacters[Globals.GetLocalIPAddress()] = localPlayer;
 
-        // Mettre l'instance du joueur existant (serveur) dans le dictionnaire
-        GameObject hostPlayer = GameObject.FindWithTag("localPlayer");
-
-        if (hostPlayer != null)
-        {
-            clientCharacters[Globals.HostIP] = hostPlayer;
+            Debug.Log("IP DU JOUEUR : " + Globals.GetLocalIPAddress());
         }
         else
         {
@@ -40,25 +32,6 @@ public class GameManager : MonoBehaviour
     void Update()
     {
         
-    }
-
-    // Gestion de l'événement lorsqu'un message est reçu via TCP
-    private void OnMessageReceived(string message, TcpClient sender)
-    {
-        string clientAddress = ((System.Net.IPEndPoint)sender.Client.RemoteEndPoint).Address.ToString();
-
-        if (message == "connect")
-        {
-            OnNewClientConnected(clientAddress);
-        }
-        else if (message == "disconnect")
-        {
-            // RemoveClient(clientAddress);
-        }
-        else
-        {
-            Debug.Log($"Message reçu de {clientAddress} : {message}");
-        }
     }
 
     // Gestion de l'événement lorsqu'un nouveau client se connecte
@@ -99,9 +72,6 @@ public class GameManager : MonoBehaviour
     // Gestion de la suppression d'un client
     public void OnRemoveClient(string clientAddress)
     {
-
-        Debug.Log("Client déconnecté 2 : " + clientAddress);
-
         // Regarde si l'instance du joueur existe
         if (clientCharacters.TryGetValue(clientAddress, out GameObject character))
         {
