@@ -39,7 +39,7 @@ public class UDPClient : MonoBehaviour
 
     private void OnMessageReceived(string message, IPEndPoint sender)
     {
-        string PlayerID = sender.Address.ToString() + ":" + sender.Port.ToString();
+        string PlayerID = sender.Address.ToString();
         Debug.Log("[CLIENT] Message received from " +
             sender.Address.ToString() + ":" + sender.Port
             + " =>" + message);
@@ -51,7 +51,6 @@ public class UDPClient : MonoBehaviour
 
     public void MovePlayer(string message, string playerID)
     {
-
         Dictionary<string, GameObject> players = gameManager.getClientCharacters();
 
         try
@@ -60,14 +59,19 @@ public class UDPClient : MonoBehaviour
 
             if (players.ContainsKey(playerID))
             {
-                players[playerID].transform.position = positionData.position;
-            } else
+                // Déplace le joueur existant
+                if (Globals.GetLocalIPAddress() != playerID)
+                {
+                    players[playerID].transform.position = positionData.position;
+
+                }
+            }
+            else
             {
-                GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
-                newPlayer.transform.position = positionData.position;
+                // Crée une nouvelle instance de prefab pour le nouveau joueur
+                GameObject newPlayer = Instantiate(CharacterPrefab, positionData.position, Quaternion.identity);
                 players.Add(playerID, newPlayer);
             }
-            
         }
         catch (System.Exception ex)
         {
