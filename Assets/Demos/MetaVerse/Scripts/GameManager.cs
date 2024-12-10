@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
         tcpService.OnMessageReceived += OnMessageReceived;
         tcpService.OnClientConnected += OnNewClientConnected;
 
+
         tcpService.StartServer(Globals.HostPort);
 
         Debug.Log("GameManager démarré en mode serveur");
@@ -38,7 +39,7 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        
+
     }
 
     // Gestion de l'événement lorsqu'un message est reçu via TCP
@@ -76,8 +77,9 @@ public class GameManager : MonoBehaviour
        
     }
 
-    public void SpawnClient(string clientAddress){
-         // Instancier un nouveau personnage à l'endroit défini par SpawnArea
+    public void SpawnClient(string clientAddress)
+    {
+        // Instancier un nouveau personnage à l'endroit défini par SpawnArea
         if (CharacterPrefab != null && SpawnArea != null)
         {
             GameObject newCharacter = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
@@ -96,8 +98,10 @@ public class GameManager : MonoBehaviour
 
 
     // Gestion de la suppression d'un client
-    public void RemoveClient(string clientAddress)
+    public void OnRemoveClient(string clientAddress)
     {
+
+        Debug.Log("Client déconnecté 2 : " + clientAddress);
 
         // Regarde si l'instance du joueur existe
         if (clientCharacters.TryGetValue(clientAddress, out GameObject character))
