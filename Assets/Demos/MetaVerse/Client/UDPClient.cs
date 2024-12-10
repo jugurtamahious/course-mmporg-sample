@@ -1,11 +1,17 @@
 using System.Net;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class UDPClient : MonoBehaviour
 {
     public UDPService UDP;
     public string ServerIP = "127.0.0.1";
     public int ServerPort = 25000;
+    
+    private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
+    
+    public GameObject CharacterPrefab; // Le Prefab du personnage
+    public Transform SpawnArea;
 
     public GameManager gameManager;
 
@@ -13,13 +19,11 @@ public class UDPClient : MonoBehaviour
     private IPEndPoint ServerEndpoint;
 
     void Awake() {
-        // Desactiver mon objet si je ne suis pas le client
         if (Globals.IsServer) {
             gameObject.SetActive(false);
         }
     }
-
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+  
     void Start()
     {
         UDP.InitClient();
@@ -27,23 +31,37 @@ public class UDPClient : MonoBehaviour
         ServerEndpoint = new IPEndPoint(IPAddress.Parse(ServerIP), ServerPort);
             
         UDP.OnMessageReceived += (string message, IPEndPoint sender) => {
+            string PlayerID = sender.Address.ToString() + ":" + sender.Port.ToString();
             Debug.Log("[CLIENT] Message received from " + 
                 sender.Address.ToString() + ":" + sender.Port 
                 + " =>" + message);
-
-                 gameManager.OnNewClientConnected(ServerEndpoint.ToString());
+                //  gameManager.OnNewClientConnected(ServerEndpoint.ToString());
+                  MovePlayer(message, PlayerID); 
         };
 
     }
 
-    // Update is called once per frame
-    // void Update()
-    // {
-    //     if (Time.time > NextCoucouTimeout) {
-    //         UDP.SendUDPMessage("coucou", ServerEndpoint);
-    //         NextCoucouTimeout = Time.time + 0.5f;
-    //     }
-    // }
+      public void MovePlayer(string message , string playerID) {
+        try
+        {
+            CharacterUpdate positionData = JsonUtility.FromJson<CharacterUpdate>(message);
+
+            if (players.ContainsKey(playerID))
+            {
+                players[playerID].transform.position = positionData.position;
+            }
+            else
+            {
+                GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
+                newPlayer.transform.position = positionData.position;
+                players.Add(playerID, newPlayer);
+            }
+        }
+        catch (System.Exception ex)
+        {
+            Debug.LogError($"Error parsing JSON message: {message}. Exception: {ex.Message}");
+        }
+    }
 
      public void sendMesageToServer(string message)
     {

@@ -200,7 +200,7 @@ public class TCPService : MonoBehaviour
             clientList.Append(clientAddress + " ");
         }
 
-        Debug.Log(clients.ToString() + " | Nombre de clients: " + clients.Count);
+        // Debug.Log(clients.ToString() + " | Nombre de clients: " + clients.Count);
     }
 
     // Méthode pour supprimer les clients déconnectés de la liste

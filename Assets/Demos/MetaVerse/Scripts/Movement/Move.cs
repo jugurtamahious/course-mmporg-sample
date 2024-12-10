@@ -80,8 +80,6 @@
 //             }
 //             yield return new WaitForSeconds(currentData.DeltaTime);
 //             currentIndex++;
-            
-
         
 //         }
 

@@ -72,7 +72,7 @@ public class GameManager : MonoBehaviour
 
         // Supprimer toute instance existante pour ce client
         RemoveClient(clientAddress);
-        SpawnClient(clientAddress);
+        // SpawnClient(clientAddress);
        
     }
 
