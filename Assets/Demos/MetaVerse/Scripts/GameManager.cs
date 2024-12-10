@@ -15,23 +15,26 @@ public class GameManager : MonoBehaviour
         // Mettre l'instance du joueur existant (local) dans le dictionnaire
         GameObject localPlayer = GameObject.FindWithTag("localPlayer");
 
-
-        if (localPlayer != null)
-        {   
-            // Server
-            clientCharacters[Globals.GetLocalIPAddress()] = localPlayer;
-
-            Debug.Log("IP DU JOUEUR : " + Globals.GetLocalIPAddress());
-        }
-        else
+        if (Globals.IsServer)
         {
-            Debug.LogError("Aucun GameObject avec le tag 'hostPlayer' trouvé !");
+            if (localPlayer != null)
+            {
+                // Server
+                clientCharacters[Globals.GetLocalIPAddress()] = localPlayer;
+
+                Debug.Log("IP DU JOUEUR : " + Globals.GetLocalIPAddress());
+            }
+            else
+            {
+                Debug.LogError("Aucun GameObject avec le tag 'hostPlayer' trouvé !");
+            }
         }
+
     }
 
     void Update()
     {
-        
+
     }
 
     // Gestion de l'événement lorsqu'un nouveau client se connecte
@@ -47,11 +50,12 @@ public class GameManager : MonoBehaviour
         // Supprimer toute instance existante pour ce client
         OnRemoveClient(clientAddress);
         SpawnClient(clientAddress);
-       
+
     }
 
-    public void SpawnClient(string clientAddress){
-         // Instancier un nouveau personnage à l'endroit défini par SpawnArea
+    public void SpawnClient(string clientAddress)
+    {
+        // Instancier un nouveau personnage à l'endroit défini par SpawnArea
         if (CharacterPrefab != null && SpawnArea != null)
         {
             GameObject newCharacter = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
@@ -84,4 +88,9 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning($"Aucun personnage trouvé pour {clientAddress}");
         }
     }
+
+    public Dictionary<string, GameObject> getCharacterDictionary() {
+        return clientCharacters;
+    }
+
 }

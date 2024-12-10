@@ -36,6 +36,8 @@ public class Bonus : MonoBehaviour
 
     if (Car != true)
     {
+      // Déclanchement d'une maj du gameState
+      Debug.Log(gameObject.name );
       Destroy(gameObject);
     }
   }
