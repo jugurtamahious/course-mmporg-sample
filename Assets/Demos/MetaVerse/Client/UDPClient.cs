@@ -4,30 +4,59 @@ using System.Collections.Generic;
 
 public class UDPClient : MonoBehaviour
 {
-    private UDPService UDP;
+
+
+    /* Serializable */
+
+    [System.Serializable]
+    public class BaseMessage
+    {
+        public MessageType messageType;
+    }
+
+    [System.Serializable]
+    public class CharacterUpdate
+    {
+        public string playerID;
+        public Vector3 position;
+        public Quaternion rotation;
+        public string animation;
+    }
+
+    [System.Serializable]
+    public class CarSyncUpdate
+    {
+        public string carID;
+        public float animationTime;
+    }
+
+    /* Variables Publiques */
+
     public string ServerIP = "127.0.0.1";
     public int ServerPort = 25000;
 
     public GameObject CharacterPrefab;
     public Transform SpawnArea;
-
     public GameManager gameManager;
-
     public ScoreManager scoreManager;
 
-    private float NextCoucouTimeout = -1;
+
+    /* Variables Privées */
+
+    private UDPService UDP;
+
     private IPEndPoint ServerEndpoint;
 
-    public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
-    public Vector3 targetPosition;
-    public Quaternion targetRotation;
+    private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
 
-    // Method to get the players dictionary
-    public Dictionary<string, GameObject> GetPlayers()
-    {
-        return players;
-    }
+    /* Events */
 
+    public delegate void CarUpdatePos(string carID, float time);
+    public event CarUpdatePos OnCarUpdatePos;
+
+    /* Méthodes Unity */
+
+    // On détruit l'objet si ce n'est pas le serveur
     void Awake()
     {
         if (Globals.IsServer)
@@ -36,6 +65,9 @@ public class UDPClient : MonoBehaviour
         }
     }
 
+    // Ajout du UDPService, initialisation du client
+    // Définition de l'adresse IP et du port du serveur
+    // Ajout de l'événement OnMessageReceived
     void Start()
     {
         UDP = gameObject.AddComponent<UDPService>();
@@ -56,16 +88,39 @@ public class UDPClient : MonoBehaviour
 
     }
 
+    /* Méthodes */
+
+    // Traitement du message quand le client le recoit du serveur
     private void OnMessageReceived(string message, IPEndPoint sender)
     {
+        // Debug 
         Debug.Log("[CLIENT] Message received from " +
             sender.Address.ToString() + ":" + sender.Port
             + " =>" + message);
 
+        // Désérialisation du message
         try
         {
-            CharacterUpdate update = JsonUtility.FromJson<CharacterUpdate>(message);
-            MovePlayer(update, update.playerID);
+
+            // Lecture du type de message
+            BaseMessage baseMessage = JsonUtility.FromJson<BaseMessage>(message);
+
+            switch (baseMessage.messageType)
+            {
+                // Traitement pour les déplacements de personnage
+                case MessageType.CharacterUpdate:
+                    CharacterUpdate updatePlayer = JsonUtility.FromJson<CharacterUpdate>(message);
+                    MovePlayer(updatePlayer, updatePlayer.playerID);
+                    break;
+
+                // Traitement pour les mises à jour des positions des voitures
+                case MessageType.CarPositionUpdate:
+                    CarSyncUpdate updateCar = JsonUtility.FromJson<CarSyncUpdate>(message);
+                    UpdateCarPositions(updateCar);
+                    break;
+            }
+
+
         }
         catch (System.Exception ex)
         {
@@ -74,7 +129,13 @@ public class UDPClient : MonoBehaviour
 
     }
 
+    // Met à jour la position des voitures avec un event
+    public void UpdateCarPositions(CarSyncUpdate update)
+    {
+        OnCarUpdatePos?.Invoke(update.carID, update.animationTime);
+    }
 
+    // Déplacement du joueur
     public void MovePlayer(CharacterUpdate positionData, string playerID)
     {
         // Vérifie si le joueur local est celui reçu
@@ -111,7 +172,7 @@ public class UDPClient : MonoBehaviour
         }
         else
         {
-            // Sinon, créez un nouveau joueur
+            // Création d'un nouveau joueur
             GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
             newPlayer.transform.position = positionData.position;
             newPlayer.transform.rotation = positionData.rotation;
@@ -120,7 +181,7 @@ public class UDPClient : MonoBehaviour
     }
 
 
-
+    // Envoi d'un message au serveur via UDP Service
     public void sendMesageToServer(string message)
     {
         UDP.SendUDPMessage(message, ServerEndpoint);
@@ -134,12 +195,4 @@ public class UDPClient : MonoBehaviour
     }
 }
 
-[System.Serializable]
-public class CharacterUpdate
-{
-    public string playerID;
-    public Vector3 position;
-    public Quaternion rotation;
-    public string animation;
-}
-}
+

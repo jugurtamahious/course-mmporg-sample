@@ -4,15 +4,33 @@ using System.Net.Sockets;
 
 public class UDPService : MonoBehaviour
 {
+
+    /* Variables */
+
     UdpClient udp;
     IPEndPoint localEP;
+
+    /* Events */
 
     public delegate void UDPMessageReceive(string message, IPEndPoint sender);
 
     public event UDPMessageReceive OnMessageReceived;
 
-    public bool Listen(int port) {
-        if (udp != null) {
+
+    /* Unity Methodes */
+
+    void Update()
+    {
+        ReceiveUDP();
+    }
+
+    /* Méthodes */
+
+    // Ecoute de messages UDP
+    public bool Listen(int port)
+    {
+        if (udp != null)
+        {
             Debug.LogWarning("Socket already initialized! Close it first.");
             return false;
         }
@@ -21,7 +39,7 @@ public class UDPService : MonoBehaviour
         {
             // Local End-Point
             localEP = new IPEndPoint(IPAddress.Any, port);
-            
+
             // Create the listener
             udp = new UdpClient();
             udp.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
@@ -40,8 +58,11 @@ public class UDPService : MonoBehaviour
         }
     }
 
-    public bool InitClient() {
-        if (udp != null) {
+    // Initialisation du client
+    public bool InitClient()
+    {
+        if (udp != null)
+        {
             Debug.LogWarning("Socket already initialized! Close it first.");
             return false;
         }
@@ -51,7 +72,8 @@ public class UDPService : MonoBehaviour
             udp = new UdpClient();
             localEP = new IPEndPoint(IPAddress.Any, 0);
             udp.Client.Bind(localEP);
-        } catch (System.Exception ex)
+        }
+        catch (System.Exception ex)
         {
             Debug.LogWarning("Error creating UDP client: " + ex.Message);
             CloseUDP();
@@ -59,57 +81,67 @@ public class UDPService : MonoBehaviour
         }
         return true;
     }
-    
-    private void CloseUDP() {
-        if (udp != null) {
+
+    // Fermeture du socket UDP
+    private void CloseUDP()
+    {
+        if (udp != null)
+        {
             udp.Close();
             udp = null;
         }
     }
 
-    void Update() {
-        ReceiveUDP();
-    }
-
-    private void ReceiveUDP() {
+    // Réception des données UDP
+    private void ReceiveUDP()
+    {
         if (udp == null) { return; }
 
         while (udp.Available > 0)
-		{
+        {
             IPEndPoint sourceEP = new IPEndPoint(IPAddress.Any, 0);
-			byte[] data = udp.Receive(ref sourceEP);
+            byte[] data = udp.Receive(ref sourceEP);
 
-			try
-			{
-				ParseString(data, sourceEP);
-			}
-			catch (System.Exception ex)
-			{
-				Debug.LogWarning("Error receiving UDP message: " + ex.Message);
-			}
-		}
+            try
+            {
+                ParseString(data, sourceEP);
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogWarning("Error receiving UDP message: " + ex.Message);
+            }
+        }
     }
 
-    private void ParseString(byte[] bytes, IPEndPoint sender) {
+    // Parse un message UDP et émet l'événement correspondant
+    private void ParseString(byte[] bytes, IPEndPoint sender)
+    {
         string message = System.Text.Encoding.UTF8.GetString(bytes);
         OnMessageReceived.Invoke(message, sender);
     }
 
-    public void SendUDPMessage(string message, IPEndPoint destination) {
+    // Envoi un message UDP
+    public void SendUDPMessage(string message, IPEndPoint destination)
+    {
         byte[] bytes = System.Text.Encoding.UTF8.GetBytes(message);
         SendUDPBytes(bytes, destination);
     }
 
-    private void SendUDPBytes(byte[] bytes, IPEndPoint destination) {
-        if (udp == null) { 
+    // Envoi des données UDP
+    private void SendUDPBytes(byte[] bytes, IPEndPoint destination)
+    {
+        if (udp == null)
+        {
             Debug.LogWarning("Trying to send a message on socket that is not yet open");
-            return; 
+            return;
         }
 
-        try {
+        try
+        {
             udp.Send(bytes, bytes.Length, destination);
-            
-        } catch (SocketException e)
+
+        }
+        catch (SocketException e)
         {
             Debug.LogWarning(e.Message);
         }

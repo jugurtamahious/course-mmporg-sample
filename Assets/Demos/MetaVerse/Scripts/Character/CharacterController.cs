@@ -1,14 +1,41 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Net;
+
+public enum MessageType
+{
+    CharacterUpdate,
+    CarPositionUpdate
+}
+[System.Serializable]
+public class CarSyncUpdate : BaseMessage
+{
+    public string carID;
+    public float animationTime;
+}
+[System.Serializable]
+public class BaseMessage
+{
+    public MessageType messageType;
+}
+
+[System.Serializable]
+public class CharacterUpdate : BaseMessage
+{
+    public string playerID;
+    public Vector3 position;
+    public Quaternion rotation;
+    public string animation;
+}
 
 public class CharacterController : MonoBehaviour
 {
+
+    /* Variables Publiques */
     public float WalkSpeed = 3f;
     public float RotateSpeed = 250f;
-    public UDPServer udpServer; // Référence au serveur UDP
-    public UDPClient udpClient; // Référence au client UDP
+    public UDPClient udpClient;
 
+    /* Variables Privées */
     private Animator Anim;
     private MetaverseInput inputs;
     private InputAction PlayerAction;
@@ -18,6 +45,9 @@ public class CharacterController : MonoBehaviour
 
     private string playerID;
 
+    /* Méthodes Unity */
+
+    // On détruit l'objet si ce n'est pas le serveur
     private void Awake()
     {
         if (Globals.IsServer)
@@ -32,8 +62,10 @@ public class CharacterController : MonoBehaviour
 
     private void Start()
     {
+        // Ne continue pas l'initialisation si je ne suis pas le joueur local
         if (!isLocalPlayer) return;
 
+        // Charger les composants du joueur
         Anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
 
@@ -55,6 +87,9 @@ public class CharacterController : MonoBehaviour
         SendPositionToServer();
     }
 
+    /* Méthodes */
+
+    // Application des mouvements du joueur
     private void HandleLocalMovement()
     {
         Vector2 movementInput = PlayerAction.ReadValue<Vector2>();
@@ -69,6 +104,7 @@ public class CharacterController : MonoBehaviour
         rb.MoveRotation(newRotation);
     }
 
+    // Envoi de la position du joueur au serveur
     private void SendPositionToServer()
     {
         AnimatorStateInfo currentState = Anim.GetCurrentAnimatorStateInfo(0);
@@ -77,6 +113,7 @@ public class CharacterController : MonoBehaviour
 
         CharacterUpdate update = new CharacterUpdate
         {
+            messageType = MessageType.CharacterUpdate,
             playerID = Globals.playerID,
             position = transform.position,
             rotation = transform.rotation,
@@ -87,17 +124,10 @@ public class CharacterController : MonoBehaviour
         udpClient.sendMesageToServer(message);
     }
 
+    // Définit si le joueur est local ou non
     public void SetLocalPlayer(bool isLocal)
     {
         isLocalPlayer = isLocal;
     }
 
-    [System.Serializable]
-    public class CharacterUpdate
-    {
-        public string playerID;
-        public Vector3 position;
-        public Quaternion rotation;
-        public string animation;
-    }
 }

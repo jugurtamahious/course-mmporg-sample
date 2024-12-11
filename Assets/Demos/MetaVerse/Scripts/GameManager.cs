@@ -1,16 +1,20 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Net.Sockets;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject CharacterPrefab; // Le Prefab du personnage
-    public Transform SpawnArea; // Le point de spawn
-    private TCPService tcpService; // Service TCP pour gérer les connexions
 
+    /* Variables Publiques */
+    public GameObject CharacterPrefab;  // Le Prefab du personnage
+    public Transform SpawnArea;         // Le point de spawn
+
+    /* Variables Privées */
+    private TCPService tcpService;      // Service TCP pour gérer les connexions
     private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
     private ScoreManager scoreManager;
 
+
+    /* Méthodes Unity */
 
     void Start()
     {
@@ -18,7 +22,6 @@ public class GameManager : MonoBehaviour
         tcpService = gameObject.AddComponent<TCPService>();
 
         // Abonnement aux évenements
-        tcpService.OnMessageReceived += OnMessageReceived;
         tcpService.OnClientConnected += OnNewClientConnected;
         tcpService.StartServer(Globals.HostPort);
 
@@ -43,6 +46,7 @@ public class GameManager : MonoBehaviour
             scoreManager.UpdatePlayerList();
         }
     }
+
 
     void Update()
     {
@@ -83,6 +87,7 @@ public class GameManager : MonoBehaviour
         // SpawnClient(clientAddress);
     }
 
+    // Gestion de la création d'un nouveau client
     public void SpawnClient(string clientAddress)
     {
         // Instancier un nouveau personnage à l'endroit défini par SpawnArea
@@ -107,6 +112,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Getter du dictionnaire
     public Dictionary<string, GameObject> getClientCharacters()
     {
         return clientCharacters;
@@ -116,8 +122,6 @@ public class GameManager : MonoBehaviour
     // Gestion de la suppression d'un client
     public void OnRemoveClient(string clientAddress)
     {
-
-        Debug.Log("Client déconnecté 2 : " + clientAddress);
 
         // Regarde si l'instance du joueur existe
         if (clientCharacters.TryGetValue(clientAddress, out GameObject character))
@@ -137,4 +141,5 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning($"Aucun personnage trouvé pour {clientAddress}");
         }
     }
+
 }
