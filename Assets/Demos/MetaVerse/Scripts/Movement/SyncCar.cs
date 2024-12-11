@@ -88,8 +88,6 @@ public class SyncCar : MonoBehaviour
     private void SendAnimationTime()
     {
 
-        Debug.Log("Démarrage du script pour la voiture " + carID);
-
         if (Globals.IsServer && udpServer != null)
         {
             float animationTime = GetAnimationTime();

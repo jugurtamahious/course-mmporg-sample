@@ -95,14 +95,11 @@ public class GameManager : MonoBehaviour
     public void OnRemoveClient(string clientAddress)
     {
 
-        Debug.Log("Client déconnecté 2 : " + clientAddress);
-
         // Regarde si l'instance du joueur existe
         if (clientCharacters.TryGetValue(clientAddress, out GameObject character))
         {
             Destroy(character); // Supprimer l'instance du personnage
             clientCharacters.Remove(clientAddress);
-            Debug.Log($"Personnage de {clientAddress} supprimé");
         }
         else
         {
