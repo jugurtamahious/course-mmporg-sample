@@ -47,7 +47,7 @@ public class UDPClient : MonoBehaviour
 
     private IPEndPoint ServerEndpoint;
 
-    private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
+    public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
 
     /* Events */
 

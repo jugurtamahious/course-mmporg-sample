@@ -34,6 +34,8 @@ public class CharacterController : MonoBehaviour
     public float WalkSpeed = 3f;
     public float RotateSpeed = 250f;
     public UDPClient udpClient;
+    public UDPServer udpServer;
+
 
     /* Variables Privées */
     private Animator Anim;

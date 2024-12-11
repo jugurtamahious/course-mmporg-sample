@@ -54,23 +54,23 @@ public class GameManager : MonoBehaviour
     }
 
     // Gestion de l'événement lorsqu'un message est reçu via TCP
-    private void OnMessageReceived(string message, TcpClient sender)
-    {
-        string clientAddress = ((System.Net.IPEndPoint)sender.Client.RemoteEndPoint).Address.ToString();
+    // private void OnMessageReceived(string message, TcpClient sender)
+    // {
+    //     string clientAddress = ((System.Net.IPEndPoint)sender.Client.RemoteEndPoint).Address.ToString();
 
-        if (message == "connect")
-        {
-            OnNewClientConnected(clientAddress);
-        }
-        else if (message == "disconnect")
-        {
-            OnRemoveClient(clientAddress);
-        }
-        else
-        {
-            Debug.Log($"Message reçu de {clientAddress} : {message}");
-        }
-    }
+    //     if (message == "connect")
+    //     {
+    //         OnNewClientConnected(clientAddress);
+    //     }
+    //     else if (message == "disconnect")
+    //     {
+    //         OnRemoveClient(clientAddress);
+    //     }
+    //     else
+    //     {
+    //         Debug.Log($"Message reçu de {clientAddress} : {message}");
+    //     }
+    // }
 
     // Gestion de l'événement lorsqu'un nouveau client se connecte
     public void OnNewClientConnected(string clientAddress)

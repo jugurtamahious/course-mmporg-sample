@@ -8,7 +8,7 @@ public class ScoreManager : MonoBehaviour
   public List<TMP_Text> scoreDisplays; // UI Texts for scores
   // public UDPClient udpClient;
 
-  UDPClient udpClient;
+  public UDPClient udpClient;
 
 
   void Start()
