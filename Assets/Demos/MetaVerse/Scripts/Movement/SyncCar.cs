@@ -64,7 +64,7 @@ public class SyncCar : MonoBehaviour
             AnimationState currentState = animationComponent[animationComponent.clip.name];
             if (currentState != null)
             {
-                return (currentState.time % currentState.length) / currentState.length;
+                return currentState.time;
             }
         }
         return 0f;

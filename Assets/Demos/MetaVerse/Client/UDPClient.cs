@@ -78,10 +78,18 @@ public class UDPClient : MonoBehaviour
 
         if (carAnimation != null)
         {
+            // Assurez-vous que l'animation est en cours de lecture
+            if (!carAnimation.isPlaying)
+            {
+                carAnimation.Play();
+            }
+
+
             // Définir la durée de l'animation
             foreach (AnimationState state in carAnimation)
             {
                 state.time = update.animationTime;
+                carAnimation.Sample();
             }
         }
         else
