@@ -36,6 +36,7 @@ public class JoinUI : MonoBehaviour
 
         Globals.HostIP = ip;
         Globals.HostPort = port;
+        
         SetRole(false);
         StartGame();
 

@@ -1,9 +1,7 @@
 using UnityEngine;
-using System.Net.Sockets;
 
 public class TCPClient : MonoBehaviour
 {
-
     private TCPService tcpService;
 
     void Awake() {

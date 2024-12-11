@@ -2,14 +2,18 @@ using UnityEngine;
 
 public class SyncCar : MonoBehaviour
 {
-    private Animation animationComponent;
-    private float syncThreshold = 1f;
+    /* Variables Publiques */
     public UDPServer udpServer; // Référence au serveur UDP
     public UDPClient udpClient; // Référence au client UDP
+
+    /* Variables Privées */
+    private Animation animationComponent;
+    private float syncThreshold = 1f;
     private float timeSinceLastUpdate = 0f;
     private const float updateInterval = 1f; // Intervalle de mise à jour en secondes
-
     private string carID;
+
+    /* Méthodes Unity */
 
     void Start()
     {
@@ -27,11 +31,12 @@ public class SyncCar : MonoBehaviour
         // Souscription à l'evennement
         udpClient.OnCarUpdatePos += UpdateAnimation;
 
-        
+
     }
 
     void Update()
     {
+        // Mise à jour des positions de voitures
         if (Globals.IsServer)
         {
             timeSinceLastUpdate += Time.deltaTime;
@@ -44,6 +49,9 @@ public class SyncCar : MonoBehaviour
         }
     }
 
+    /* Méthodes */
+
+    // Mise à jour de l'animation
     public void UpdateAnimation(string otherCarID, float newAnimationTime)
     {
         if (animationComponent && carID == otherCarID)
@@ -62,6 +70,7 @@ public class SyncCar : MonoBehaviour
         }
     }
 
+    // Obtenir le temps d'animation
     public float GetAnimationTime()
     {
         if (animationComponent)
@@ -75,10 +84,9 @@ public class SyncCar : MonoBehaviour
         return 0f;
     }
 
+    // Envoi du temps d'animation
     private void SendAnimationTime()
     {
-
-        Debug.Log("Démarrage du script pour la voiture " + carID);
 
         if (Globals.IsServer && udpServer != null)
         {
@@ -96,21 +104,4 @@ public class SyncCar : MonoBehaviour
         }
     }
 
-    public enum MessageType
-    {
-        CharacterUpdate,
-        CarPositionUpdate
-    }
-
-    [System.Serializable]
-    public class BaseMessage
-    {
-        public MessageType messageType;
-    }
-    [System.Serializable]
-    public class CarSyncUpdate : BaseMessage
-    {
-        public string carID;
-        public float animationTime;
-    }
 }

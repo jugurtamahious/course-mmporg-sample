@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using System.Net;
 using UnityEngine.SceneManagement;
@@ -30,8 +29,9 @@ public class HostUI : MonoBehaviour
             return;
         }
 
-        Globals.HostIP = GetLocalIPAddress();
+        Globals.HostIP   = GetLocalIPAddress();
         Globals.HostPort = port;
+        
         SetRole(true);
         StartGame();
       
