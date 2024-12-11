@@ -57,36 +57,36 @@ public class UDPClient : MonoBehaviour
 
     }
 
-     public void MovePlayer(string message, string playerID)
+    public void MovePlayer(CharacterUpdate positionData, string playerID)
     {
- 
-        CharacterUpdate positionData = JsonUtility.FromJson<CharacterUpdate>(message);
-
         if (players.ContainsKey(playerID))
         {
-            players[playerID].transform.position = positionData.position;
-                
+            if (Globals.playerID != playerID)
+            {
+                players[playerID].transform.position = positionData.position;
                 players[playerID].transform.rotation = positionData.rotation;
 
-            Animator animator =  players[playerID].GetComponent<Animator>();
+                Animator animator = players[playerID].GetComponent<Animator>();
 
-            if (animator)
-            {
+                if (animator)
+                {
                     string animationToPlay = positionData.animation;
 
-                // Map "Other" to "Walk"
-                if (animationToPlay == "Other")
-                {
-                    animationToPlay = "Walk";
-                }
-        
-                if (animationToPlay == "Walk")
-                {
-                    animator.SetFloat("Walk", 1.0f); 
-                }
-                else
-                {
-                    animator.SetFloat("Walk", 0.0f);
+                    // Map "Other" to "Walk"
+                    if (animationToPlay == "Other")
+                    {
+                        animationToPlay = "Walk";
+                    }
+
+                    if (animationToPlay == "Walk")
+                    {
+                        animator.SetFloat("Walk", 1.0f); // Déclenche l'animation de marche
+                    }
+                    else
+                    {
+                        animator.SetFloat("Walk", 0.0f);
+                        animator.Play(animationToPlay);
+                    }
                 }
             }
         }
@@ -97,8 +97,8 @@ public class UDPClient : MonoBehaviour
             newPlayer.transform.rotation = positionData.rotation;
             players.Add(playerID, newPlayer);
         }
-      
     }
+
 
     public void sendMesageToServer(string message)
     {
