@@ -133,8 +133,6 @@ public class TCPService : MonoBehaviour
             string clientAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
             clientList.Append(clientAddress + " ");
         }
-        // Debug.Log(GetClients());
-        // Debug.Log(clients.ToString() + " | Nombre de clients: " + clients.Count);
     }
 
     // Méthode pour supprimer les clients déconnectés de la liste

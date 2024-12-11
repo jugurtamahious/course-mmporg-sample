@@ -48,7 +48,6 @@ public class UDPServer : MonoBehaviour
     /// <param name="playerID">ID unique du joueur.</param>
     public void MovePlayer(string message, string playerID)
     {
- 
         CharacterUpdate positionData = JsonUtility.FromJson<CharacterUpdate>(message);
 
         if (players.ContainsKey(playerID))

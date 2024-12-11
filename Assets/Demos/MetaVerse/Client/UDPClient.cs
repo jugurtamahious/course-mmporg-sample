@@ -28,14 +28,18 @@ public class UDPClient : MonoBehaviour
 
     void Start()
     {
-
         UDP = gameObject.AddComponent<UDPService>();
 
         UDP.InitClient();
+         
+        GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
+        CharacterController c = newPlayer.GetComponent<CharacterController>();
+        c.enabled = true;
 
         ServerEndpoint = new IPEndPoint(IPAddress.Parse(Globals.HostIP), Globals.HostPort);
 
         UDP.OnMessageReceived += OnMessageReceived;
+
 
     }
 
@@ -71,8 +75,7 @@ public class UDPClient : MonoBehaviour
                 if (animator)
                 {
                     string animationToPlay = positionData.animation;
-
-                    // Map "Other" to "Walk"
+          
                     if (animationToPlay == "Other")
                     {
                         animationToPlay = "Walk";
@@ -80,7 +83,7 @@ public class UDPClient : MonoBehaviour
 
                     if (animationToPlay == "Walk")
                     {
-                        animator.SetFloat("Walk", 1.0f); // Déclenche l'animation de marche
+                        animator.SetFloat("Walk", 1.0f);
                     }
                     else
                     {
@@ -104,7 +107,6 @@ public class UDPClient : MonoBehaviour
     {
         UDP.SendUDPMessage(message, ServerEndpoint);
     }
-
 
      [System.Serializable]
     public class CharacterUpdate
