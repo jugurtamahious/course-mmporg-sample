@@ -73,7 +73,22 @@ public class UDPClient : MonoBehaviour
 
     public void UpdateCarPositions(CarSyncUpdate update)
     {
-        Debug.Log(update.carID + " => " + update.animationTime);
+        GameObject car = GameObject.Find(update.carID);
+        Animation carAnimation = car.GetComponent<Animation>();
+
+        if (carAnimation != null)
+        {
+            // Définir la durée de l'animation
+            foreach (AnimationState state in carAnimation)
+            {
+                state.time = update.animationTime;
+            }
+        }
+        else
+        {
+            Debug.LogWarning($"Animation component not found on car with ID {update.carID}.");
+        }
+
     }
 
     public void MovePlayer(CharacterUpdate positionData, string playerID)
