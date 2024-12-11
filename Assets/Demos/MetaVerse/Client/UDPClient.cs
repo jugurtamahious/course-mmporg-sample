@@ -47,14 +47,33 @@ public class UDPClient : MonoBehaviour
 
         try
         {
-            CharacterUpdate update = JsonUtility.FromJson<CharacterUpdate>(message);
-            MovePlayer(update, update.playerID);
+
+            BaseMessage baseMessage = JsonUtility.FromJson<BaseMessage>(message);
+
+            switch (baseMessage.messageType)
+            {
+                case MessageType.CharacterUpdate:
+                    CharacterUpdate updatePlayer = JsonUtility.FromJson<CharacterUpdate>(message);
+                    MovePlayer(updatePlayer, updatePlayer.playerID);
+                    break;
+                case MessageType.CarPositionUpdate:
+                    CarSyncUpdate updateCar = JsonUtility.FromJson<CarSyncUpdate>(message);
+                    UpdateCarPositions(updateCar);
+                    break;
+            }
+
+
         }
         catch (System.Exception ex)
         {
             Debug.LogError($"Error parsing message: {ex.Message}");
         }
 
+    }
+
+    public void UpdateCarPositions(CarSyncUpdate update)
+    {
+        Debug.Log(update.carID + " => " + update.animationTime);
     }
 
     public void MovePlayer(CharacterUpdate positionData, string playerID)
@@ -105,6 +124,17 @@ public class UDPClient : MonoBehaviour
         UDP.SendUDPMessage(message, ServerEndpoint);
     }
 
+    public enum MessageType
+    {
+        CharacterUpdate,
+        CarPositionUpdate
+    }
+
+    [System.Serializable]
+    public class BaseMessage
+    {
+        public MessageType messageType;
+    }
 
     [System.Serializable]
     public class CharacterUpdate

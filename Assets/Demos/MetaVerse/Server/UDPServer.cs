@@ -100,8 +100,28 @@ public class UDPServer : MonoBehaviour
         }
     }
 
+    public void BroadcastCarPositions(string message)
+    {
+        foreach (KeyValuePair<string, IPEndPoint> client in Clients)
+        {
+            UDP.SendUDPMessage(message, client.Value);
+        }
+    }
+
+    public enum MessageType
+    {
+        CharacterUpdate,
+        CarPositionUpdate
+    }
+
     [System.Serializable]
-    public class CharacterUpdate
+    public class BaseMessage
+    {
+        public MessageType messageType;
+    }
+
+    [System.Serializable]
+    public class CharacterUpdate : BaseMessage
     {
         public string playerID;
         public Vector3 position;
@@ -110,7 +130,8 @@ public class UDPServer : MonoBehaviour
     }
 
     [System.Serializable]
-    public class CarSyncUpdate {
+    public class CarSyncUpdate : BaseMessage
+    {
         public string carID;
         public float animationTime;
     }
