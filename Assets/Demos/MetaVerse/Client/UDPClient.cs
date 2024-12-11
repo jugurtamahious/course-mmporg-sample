@@ -13,12 +13,20 @@ public class UDPClient : MonoBehaviour
 
     public GameManager gameManager;
 
+    public ScoreManager scoreManager;
+
     private float NextCoucouTimeout = -1;
     private IPEndPoint ServerEndpoint;
 
-    private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
+    public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
     public Vector3 targetPosition;
     public Quaternion targetRotation;
+
+    // Method to get the players dictionary
+    public Dictionary<string, GameObject> GetPlayers()
+    {
+        return players;
+    }
 
     void Awake()
     {
@@ -65,14 +73,14 @@ public class UDPClient : MonoBehaviour
         {
             if (Globals.playerID != playerID)
             {
-               // Met à jour les cibles
-            targetPosition = positionData.position;
-            targetRotation = positionData.rotation;
+                // Met à jour les cibles
+                targetPosition = positionData.position;
+                targetRotation = positionData.rotation;
 
-            // Interpolation
-            players[playerID].transform.position = Vector3.Lerp(players[playerID].transform.position, targetPosition, Time.deltaTime * 30f);
-            players[playerID].transform.rotation = Quaternion.Lerp(players[playerID].transform.rotation, targetRotation, Time.deltaTime * 30f);
-            
+                // Interpolation
+                players[playerID].transform.position = Vector3.Lerp(players[playerID].transform.position, targetPosition, Time.deltaTime * 30f);
+                players[playerID].transform.rotation = Quaternion.Lerp(players[playerID].transform.rotation, targetRotation, Time.deltaTime * 30f);
+
                 Animator animator = players[playerID].GetComponent<Animator>();
 
                 if (animator)
@@ -110,10 +118,16 @@ public class UDPClient : MonoBehaviour
     public void sendMesageToServer(string message)
     {
         UDP.SendUDPMessage(message, ServerEndpoint);
+
+        // Find the ScoreManager instance
+        scoreManager = FindObjectOfType<ScoreManager>();
+        if (scoreManager != null)
+        {
+            scoreManager.UpdatePlayerList();
+        }
     }
 
-
-     [System.Serializable]
+    [System.Serializable]
     public class CharacterUpdate
     {
         public string playerID;

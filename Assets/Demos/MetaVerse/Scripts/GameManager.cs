@@ -9,6 +9,8 @@ public class GameManager : MonoBehaviour
     private TCPService tcpService; // Service TCP pour gérer les connexions
 
     private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
+    private ScoreManager scoreManager;
+
 
     void Start()
     {
@@ -18,8 +20,6 @@ public class GameManager : MonoBehaviour
         // Abonnement aux évenements
         tcpService.OnMessageReceived += OnMessageReceived;
         tcpService.OnClientConnected += OnNewClientConnected;
-
-
         tcpService.StartServer(Globals.HostPort);
 
         Debug.Log("GameManager démarré en mode serveur");
@@ -34,6 +34,13 @@ public class GameManager : MonoBehaviour
         else
         {
             Debug.LogError("Aucun GameObject avec le tag 'hostPlayer' trouvé !");
+        }
+
+        // Find the ScoreManager instance
+        scoreManager = FindObjectOfType<ScoreManager>();
+        if (scoreManager != null)
+        {
+            scoreManager.UpdatePlayerList();
         }
     }
 
@@ -53,7 +60,7 @@ public class GameManager : MonoBehaviour
         }
         else if (message == "disconnect")
         {
-            // RemoveClient(clientAddress);
+            OnRemoveClient(clientAddress);
         }
         else
         {
@@ -74,7 +81,6 @@ public class GameManager : MonoBehaviour
         // Supprimer toute instance existante pour ce client
         OnRemoveClient(clientAddress);
         // SpawnClient(clientAddress);
-       
     }
 
     public void SpawnClient(string clientAddress)
@@ -87,8 +93,13 @@ public class GameManager : MonoBehaviour
             // Ajouter le personnage à la liste des personnages clients
             clientCharacters[clientAddress] = newCharacter;
             newCharacter.name = $"Character_{clientAddress}";
-
             Debug.Log($"Personnage créé pour le client {clientAddress}");
+
+            // Update the ScoreManager with the new list of players
+            if (scoreManager != null)
+            {
+                scoreManager.UpdatePlayerList();
+            }
         }
         else
         {
@@ -114,6 +125,12 @@ public class GameManager : MonoBehaviour
             Destroy(character); // Supprimer l'instance du personnage
             clientCharacters.Remove(clientAddress);
             Debug.Log($"Personnage de {clientAddress} supprimé");
+
+            // Update the ScoreManager with the new list of players
+            if (scoreManager != null)
+            {
+                scoreManager.UpdatePlayerList();
+            }
         }
         else
         {
