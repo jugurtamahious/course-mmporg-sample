@@ -2,13 +2,6 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using System.Net;
 
-[System.Serializable]
-public class CharacterUpdate
-{
-    public string playerID; // Identifiant unique du joueur
-    public Vector3 position; // Position du joueur
-}
-
 public class CharacterController : MonoBehaviour
 {
     public float WalkSpeed = 3f;
@@ -32,6 +25,9 @@ public class CharacterController : MonoBehaviour
             isLocalPlayer = false;
             enabled = false;
         }
+
+        udpServer = GameObject.FindFirstObjectByType<UDPServer>();
+        udpClient = GameObject.FindFirstObjectByType<UDPClient>();
     }
 
     private void Start()
@@ -49,7 +45,6 @@ public class CharacterController : MonoBehaviour
         // Générer un identifiant unique pour chaque joueur
         playerID = "Player" + UnityEngine.Random.Range(1000, 9999).ToString();
         Globals.playerID = playerID;
-        Debug.Log("Player ID: " + playerID);
     }
 
     private void FixedUpdate()

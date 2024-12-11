@@ -38,14 +38,21 @@ public class UDPClient : MonoBehaviour
 
     void Start()
     {
-
         UDP = gameObject.AddComponent<UDPService>();
 
         UDP.InitClient();
 
+        GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
+        CharacterController c = newPlayer.GetComponent<CharacterController>();
+        c.enabled = true;
+
+        Globals.playerID = "Player" + UnityEngine.Random.Range(1000, 9999).ToString();
+        players.Add(Globals.playerID, newPlayer);
+
         ServerEndpoint = new IPEndPoint(IPAddress.Parse(Globals.HostIP), Globals.HostPort);
 
         UDP.OnMessageReceived += OnMessageReceived;
+
 
     }
 
@@ -67,52 +74,51 @@ public class UDPClient : MonoBehaviour
 
     }
 
+
     public void MovePlayer(CharacterUpdate positionData, string playerID)
     {
+        // Vérifie si le joueur local est celui reçu
+        if (Globals.playerID == playerID)
+        {
+            return;
+        }
+
+        // Si le joueur existe déjà, mettez à jour sa position et animation
         if (players.ContainsKey(playerID))
         {
-            if (Globals.playerID != playerID)
+            players[playerID].transform.position = positionData.position;
+            players[playerID].transform.rotation = positionData.rotation;
+
+            Animator animator = players[playerID].GetComponent<Animator>();
+            if (animator)
             {
-                // Met à jour les cibles
-                targetPosition = positionData.position;
-                targetRotation = positionData.rotation;
-
-                // Interpolation
-                players[playerID].transform.position = Vector3.Lerp(players[playerID].transform.position, targetPosition, Time.deltaTime * 30f);
-                players[playerID].transform.rotation = Quaternion.Lerp(players[playerID].transform.rotation, targetRotation, Time.deltaTime * 30f);
-
-                Animator animator = players[playerID].GetComponent<Animator>();
-
-                if (animator)
+                string animationToPlay = positionData.animation;
+                if (animationToPlay == "Other")
                 {
-                    string animationToPlay = positionData.animation;
+                    animationToPlay = "Walk";
+                }
 
-                    // Map "Other" to "Walk"
-                    if (animationToPlay == "Other")
-                    {
-                        animationToPlay = "Walk";
-                    }
-
-                    if (animationToPlay == "Walk")
-                    {
-                        animator.SetFloat("Walk", 1.0f); // Déclenche l'animation de marche
-                    }
-                    else
-                    {
-                        animator.SetFloat("Walk", 0.0f);
-                        animator.Play(animationToPlay);
-                    }
+                if (animationToPlay == "Walk")
+                {
+                    animator.SetFloat("Walk", 1.0f);
+                }
+                else
+                {
+                    animator.SetFloat("Walk", 0.0f);
+                    animator.Play(animationToPlay);
                 }
             }
         }
         else
         {
+            // Sinon, créez un nouveau joueur
             GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
             newPlayer.transform.position = positionData.position;
             newPlayer.transform.rotation = positionData.rotation;
             players.Add(playerID, newPlayer);
         }
     }
+
 
 
     public void sendMesageToServer(string message)
@@ -126,13 +132,14 @@ public class UDPClient : MonoBehaviour
             scoreManager.UpdatePlayerList();
         }
     }
+}
 
-    [System.Serializable]
-    public class CharacterUpdate
-    {
-        public string playerID;
-        public Vector3 position;
-        public Quaternion rotation;
-        public string animation;
-    }
+[System.Serializable]
+public class CharacterUpdate
+{
+    public string playerID;
+    public Vector3 position;
+    public Quaternion rotation;
+    public string animation;
+}
 }
