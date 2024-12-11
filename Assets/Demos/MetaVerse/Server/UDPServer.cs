@@ -9,6 +9,10 @@ public class UDPServer : MonoBehaviour
     public GameObject CharacterPrefab;
     public Transform SpawnArea;
 
+    public Vector3 targetPosition;
+    public Quaternion targetRotation;
+
+
     public Dictionary<string, IPEndPoint> Clients = new Dictionary<string, IPEndPoint>(); 
     private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
 
@@ -53,10 +57,13 @@ public class UDPServer : MonoBehaviour
 
         if (players.ContainsKey(playerID))
         {
-            players[playerID].transform.position = positionData.position;
-                
-                players[playerID].transform.rotation = positionData.rotation;
+            targetPosition = positionData.position;
+            targetRotation = positionData.rotation;
 
+            // Interpolation
+            players[playerID].transform.position = Vector3.Lerp(players[playerID].transform.position, targetPosition, Time.deltaTime * 30f);
+            players[playerID].transform.rotation = Quaternion.Lerp(players[playerID].transform.rotation, targetRotation, Time.deltaTime * 30f);
+        
             Animator animator =  players[playerID].GetComponent<Animator>();
 
             if (animator)
