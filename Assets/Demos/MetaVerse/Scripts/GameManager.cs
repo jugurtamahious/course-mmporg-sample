@@ -1,16 +1,18 @@
 using UnityEngine;
 using System.Collections.Generic;
-using System.Net.Sockets;
-using System;
 
 public class GameManager : MonoBehaviour
 {
-    public GameObject CharacterPrefab; // Le Prefab du personnage
-    public Transform SpawnArea; // Le point de spawn
-    private TCPService tcpService; // Service TCP pour gérer les connexions
 
+    /* Variables Publiques */
+    public GameObject CharacterPrefab;  // Le Prefab du personnage
+    public Transform SpawnArea;         // Le point de spawn
+
+    /* Variables Privées */
+    private TCPService tcpService;      // Service TCP pour gérer les connexions
     private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
 
+    /* Méthodes Unity */
 
     void Start()
     {
@@ -18,7 +20,6 @@ public class GameManager : MonoBehaviour
         tcpService = gameObject.AddComponent<TCPService>();
 
         // Abonnement aux évenements
-        tcpService.OnMessageReceived += OnMessageReceived;
         tcpService.OnClientConnected += OnNewClientConnected;
 
 
@@ -46,24 +47,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    // Gestion de l'événement lorsqu'un message est reçu via TCP
-    private void OnMessageReceived(string message, TcpClient sender)
-    {
-        string clientAddress = ((System.Net.IPEndPoint)sender.Client.RemoteEndPoint).Address.ToString();
-
-        if (message == "connect")
-        {
-            OnNewClientConnected(clientAddress);
-        }
-        else if (message == "disconnect")
-        {
-            // RemoveClient(clientAddress);
-        }
-        else
-        {
-            Debug.Log($"Message reçu de {clientAddress} : {message}");
-        }
-    }
+    /* Méthodes */
 
     // Gestion de l'événement lorsqu'un nouveau client se connecte
     public void OnNewClientConnected(string clientAddress)
@@ -80,6 +64,7 @@ public class GameManager : MonoBehaviour
 
     }
 
+    // Gestion de la création d'un nouveau client
     public void SpawnClient(string clientAddress)
     {
         // Instancier un nouveau personnage à l'endroit défini par SpawnArea
@@ -99,6 +84,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    // Getter du dictionnaire
     public Dictionary<string, GameObject> getClientCharacters()
     {
         return clientCharacters;

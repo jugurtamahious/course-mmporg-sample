@@ -10,7 +10,6 @@ public class TCPService : MonoBehaviour
     /** 
     * Gestion des variables privées
     */
-    private bool isServer = Globals.IsServer;
     private TcpListener tcpListener;
     private TcpClient tcpClient;
     private NetworkStream networkStream;
@@ -28,9 +27,6 @@ public class TCPService : MonoBehaviour
 
     public delegate void ClientConnectedHandler(string clientAddress);
     public event ClientConnectedHandler OnClientConnected;
-
-    public delegate void TCPMessageReceived(string message, TcpClient sender);
-    public event TCPMessageReceived OnMessageReceived;
 
     public delegate void RemoveClient(string ip);
     public event RemoveClient OnClientRemoved;
@@ -50,7 +46,6 @@ public class TCPService : MonoBehaviour
         {
             tcpListener = new TcpListener(IPAddress.Any, port);
             tcpListener.Start();
-            isServer = true;
             Debug.Log("TCP Server started on port: " + port);
             return true;
         }
@@ -90,7 +85,6 @@ public class TCPService : MonoBehaviour
             tcpClient = new TcpClient();
             tcpClient.Connect(ip, port);
             networkStream = tcpClient.GetStream();
-            isServer = false;
             Debug.Log("Connected to server at " + ip + ":" + port);
             return true;
         }
@@ -133,8 +127,7 @@ public class TCPService : MonoBehaviour
             string clientAddress = ((IPEndPoint)client.Client.RemoteEndPoint).Address.ToString();
             clientList.Append(clientAddress + " ");
         }
-        // Debug.Log(GetClients());
-        // Debug.Log(clients.ToString() + " | Nombre de clients: " + clients.Count);
+
     }
 
     // Méthode pour supprimer les clients déconnectés de la liste
