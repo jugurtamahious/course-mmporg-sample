@@ -36,6 +36,9 @@ public class UDPClient : MonoBehaviour
         CharacterController c = newPlayer.GetComponent<CharacterController>();
         c.enabled = true;
 
+        Globals.playerID = "Player" + UnityEngine.Random.Range(1000, 9999).ToString(); 
+        players.Add(Globals.playerID, newPlayer);
+
         ServerEndpoint = new IPEndPoint(IPAddress.Parse(Globals.HostIP), Globals.HostPort);
 
         UDP.OnMessageReceived += OnMessageReceived;
@@ -61,46 +64,51 @@ public class UDPClient : MonoBehaviour
 
     }
 
+   
     public void MovePlayer(CharacterUpdate positionData, string playerID)
     {
+        // Vérifie si le joueur local est celui reçu
+        if (Globals.playerID == playerID)
+        {
+            return;
+        }
+
+        // Si le joueur existe déjà, mettez à jour sa position et animation
         if (players.ContainsKey(playerID))
         {
-            if (Globals.playerID != playerID)
+            players[playerID].transform.position = positionData.position;
+            players[playerID].transform.rotation = positionData.rotation;
+
+            Animator animator = players[playerID].GetComponent<Animator>();
+            if (animator)
             {
-                players[playerID].transform.position = positionData.position;
-                players[playerID].transform.rotation = positionData.rotation;
-
-                Animator animator = players[playerID].GetComponent<Animator>();
-
-                if (animator)
+                string animationToPlay = positionData.animation;
+                if (animationToPlay == "Other")
                 {
-                    string animationToPlay = positionData.animation;
-          
-                    if (animationToPlay == "Other")
-                    {
-                        animationToPlay = "Walk";
-                    }
+                    animationToPlay = "Walk";
+                }
 
-                    if (animationToPlay == "Walk")
-                    {
-                        animator.SetFloat("Walk", 1.0f);
-                    }
-                    else
-                    {
-                        animator.SetFloat("Walk", 0.0f);
-                        animator.Play(animationToPlay);
-                    }
+                if (animationToPlay == "Walk")
+                {
+                    animator.SetFloat("Walk", 1.0f);
+                }
+                else
+                {
+                    animator.SetFloat("Walk", 0.0f);
+                    animator.Play(animationToPlay);
                 }
             }
         }
         else
         {
+            // Sinon, créez un nouveau joueur
             GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
             newPlayer.transform.position = positionData.position;
             newPlayer.transform.rotation = positionData.rotation;
             players.Add(playerID, newPlayer);
         }
     }
+
 
 
     public void sendMesageToServer(string message)
