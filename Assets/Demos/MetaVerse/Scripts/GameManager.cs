@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,6 +10,7 @@ public class GameManager : MonoBehaviour
     private TCPService tcpService; // Service TCP pour gérer les connexions
 
     private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
+
 
     void Start()
     {
@@ -35,7 +37,9 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("Aucun GameObject avec le tag 'hostPlayer' trouvé !");
         }
+
     }
+
 
     void Update()
     {
@@ -73,8 +77,7 @@ public class GameManager : MonoBehaviour
 
         // Supprimer toute instance existante pour ce client
         OnRemoveClient(clientAddress);
-        // SpawnClient(clientAddress);
-       
+
     }
 
     public void SpawnClient(string clientAddress)
@@ -120,4 +123,5 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning($"Aucun personnage trouvé pour {clientAddress}");
         }
     }
+
 }

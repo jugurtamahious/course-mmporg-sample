@@ -20,6 +20,9 @@ public class UDPClient : MonoBehaviour
     public Vector3 targetPosition;
     public Quaternion targetRotation;
 
+    public delegate void CarUpdatePos(string carID, float time);
+    public event CarUpdatePos OnCarUpdatePos;
+
     void Awake()
     {
         if (Globals.IsServer)
@@ -49,14 +52,33 @@ public class UDPClient : MonoBehaviour
 
         try
         {
-            CharacterUpdate update = JsonUtility.FromJson<CharacterUpdate>(message);
-            MovePlayer(update, update.playerID);
+
+            BaseMessage baseMessage = JsonUtility.FromJson<BaseMessage>(message);
+
+            switch (baseMessage.messageType)
+            {
+                case MessageType.CharacterUpdate:
+                    CharacterUpdate updatePlayer = JsonUtility.FromJson<CharacterUpdate>(message);
+                    MovePlayer(updatePlayer, updatePlayer.playerID);
+                    break;
+                case MessageType.CarPositionUpdate:
+                    CarSyncUpdate updateCar = JsonUtility.FromJson<CarSyncUpdate>(message);
+                    UpdateCarPositions(updateCar);
+                    break;
+            }
+
+
         }
         catch (System.Exception ex)
         {
             Debug.LogError($"Error parsing message: {ex.Message}");
         }
 
+    }
+
+    public void UpdateCarPositions(CarSyncUpdate update)
+    {
+        OnCarUpdatePos?.Invoke(update.carID, update.animationTime);
     }
 
     public void MovePlayer(CharacterUpdate positionData, string playerID)
@@ -112,13 +134,31 @@ public class UDPClient : MonoBehaviour
         UDP.SendUDPMessage(message, ServerEndpoint);
     }
 
+    public enum MessageType
+    {
+        CharacterUpdate,
+        CarPositionUpdate
+    }
 
-     [System.Serializable]
+    [System.Serializable]
+    public class BaseMessage
+    {
+        public MessageType messageType;
+    }
+
+    [System.Serializable]
     public class CharacterUpdate
     {
         public string playerID;
         public Vector3 position;
         public Quaternion rotation;
         public string animation;
+    }
+
+    [System.Serializable]
+    public class CarSyncUpdate
+    {
+        public string carID;
+        public float animationTime;
     }
 }
