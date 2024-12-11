@@ -26,10 +26,8 @@ public class SyncCar : MonoBehaviour
 
         // Souscription à l'evennement
         udpClient.OnCarUpdatePos += UpdateAnimation;
-    }
 
-    void Update()
-    {
+
         if (Globals.IsServer)
         {
             timeSinceLastUpdate += Time.deltaTime;
@@ -40,6 +38,11 @@ public class SyncCar : MonoBehaviour
                 timeSinceLastUpdate = 0f; // Réinitialiser le compteur de temps
             }
         }
+    }
+
+    void Update()
+    {
+        
     }
 
     public void UpdateAnimation(string otherCarID, float newAnimationTime)

@@ -37,7 +37,6 @@ public class UDPServer : MonoBehaviour
             }
 
             MovePlayer(message, playerID);
-
             BroadcastPlayerPositions(message);
         };
     }
