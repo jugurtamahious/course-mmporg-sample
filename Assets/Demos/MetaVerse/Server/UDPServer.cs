@@ -10,6 +10,10 @@ public class UDPServer : MonoBehaviour
     public GameObject CharacterPrefab;
     public Transform SpawnArea;
 
+    public Vector3 targetPosition;
+    public Quaternion targetRotation;
+
+
     public Dictionary<string, IPEndPoint> Clients = new Dictionary<string, IPEndPoint>();
     private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
 
