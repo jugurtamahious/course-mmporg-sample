@@ -106,12 +106,19 @@ public class UDPClient : MonoBehaviour
     }
 
 
-     [System.Serializable]
+    [System.Serializable]
     public class CharacterUpdate
     {
         public string playerID;
         public Vector3 position;
         public Quaternion rotation;
         public string animation;
+    }
+
+    [System.Serializable]
+    public class CarSyncUpdate
+    {
+        public string carID;
+        public float animationTime;
     }
 }

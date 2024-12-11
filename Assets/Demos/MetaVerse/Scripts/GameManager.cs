@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -9,6 +10,10 @@ public class GameManager : MonoBehaviour
     private TCPService tcpService; // Service TCP pour gérer les connexions
 
     private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
+
+    // Événement pour recevoir les durées d'animation des voitures
+    public static event Action<string, float> OnCarAnimationTimeUpdated;
+
 
     void Start()
     {
@@ -35,7 +40,19 @@ public class GameManager : MonoBehaviour
         {
             Debug.LogError("Aucun GameObject avec le tag 'hostPlayer' trouvé !");
         }
+
+        // S'abonner à l'événement
+        OnCarAnimationTimeUpdated += HandleCarAnimationTimeUpdated;
+
     }
+
+
+    private void HandleCarAnimationTimeUpdated(string carID, float animationTime)
+    {
+        Debug.Log($"Voiture {carID} a une durée d'animation : {animationTime}");
+        // Ajoute ici le traitement que tu souhaites, comme l'envoyer au serveur ou afficher des informations.
+    }
+
 
     void Update()
     {
@@ -73,8 +90,7 @@ public class GameManager : MonoBehaviour
 
         // Supprimer toute instance existante pour ce client
         OnRemoveClient(clientAddress);
-        // SpawnClient(clientAddress);
-       
+
     }
 
     public void SpawnClient(string clientAddress)
