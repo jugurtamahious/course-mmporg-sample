@@ -11,9 +11,6 @@ public class GameManager : MonoBehaviour
 
     private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
 
-    // Événement pour recevoir les durées d'animation des voitures
-    public static event Action<string, float> OnCarAnimationTimeUpdated;
-
 
     void Start()
     {
@@ -41,16 +38,6 @@ public class GameManager : MonoBehaviour
             Debug.LogError("Aucun GameObject avec le tag 'hostPlayer' trouvé !");
         }
 
-        // S'abonner à l'événement
-        OnCarAnimationTimeUpdated += HandleCarAnimationTimeUpdated;
-
-    }
-
-
-    private void HandleCarAnimationTimeUpdated(string carID, float animationTime)
-    {
-        Debug.Log($"Voiture {carID} a une durée d'animation : {animationTime}");
-        // Ajoute ici le traitement que tu souhaites, comme l'envoyer au serveur ou afficher des informations.
     }
 
 
@@ -136,4 +123,5 @@ public class GameManager : MonoBehaviour
             Debug.LogWarning($"Aucun personnage trouvé pour {clientAddress}");
         }
     }
+
 }

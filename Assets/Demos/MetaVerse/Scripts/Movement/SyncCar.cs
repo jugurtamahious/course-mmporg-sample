@@ -2,49 +2,73 @@ using UnityEngine;
 
 public class SyncCar : MonoBehaviour
 {
-    private Animator animator;
-    private float syncThreshold = 0.1f;
+    private Animation animationComponent;
+    private float syncThreshold = 1f;
     public GameManager gameManager;
-    private int carID;
+    private string carID;
+    public UDPServer udpServer; // Référence au serveur UDP
 
     void Start()
     {
+        carID = gameObject.name;
 
-        carID = GetInstanceID();
+        // Récupérer le composant Animation
+        animationComponent = GetComponent<Animation>();
 
-        animator = GetComponent<Animator>();
+        if (animationComponent == null)
+        {
+            Debug.LogError("Aucun composant Animation trouvé sur l'objet : " + carID);
+            return;
+        }
 
         // Lancer une boucle périodique pour envoyer les durées d'animation
-        InvokeRepeating(nameof(SendAnimationTime), 1f, 1f); // Appelle toutes les secondes
+        InvokeRepeating(nameof(SendAnimationTime), 1f, 1f);
     }
 
     public void UpdateAnimation(float newAnimationTime)
     {
-        if (animator)
+        if (animationComponent)
         {
-            float currentAnimationTime = animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1;
-            if (Mathf.Abs(currentAnimationTime - newAnimationTime) > syncThreshold)
+            // Obtenez l'animation actuelle
+            AnimationState currentState = animationComponent[animationComponent.clip.name];
+            if (currentState != null)
             {
-                animator.Play(0, 0, newAnimationTime);
+                float currentAnimationTime = currentState.time % currentState.length;
+                if (Mathf.Abs(currentAnimationTime - newAnimationTime) > syncThreshold)
+                {
+                    currentState.time = newAnimationTime * currentState.length;
+                    animationComponent.Play();
+                }
             }
         }
     }
 
     public float GetAnimationTime()
     {
-        if (animator)
+        if (animationComponent)
         {
-            return animator.GetCurrentAnimatorStateInfo(0).normalizedTime % 1;
+            AnimationState currentState = animationComponent[animationComponent.clip.name];
+            if (currentState != null)
+            {
+                return (currentState.time % currentState.length) / currentState.length;
+            }
         }
         return 0f;
     }
 
     private void SendAnimationTime()
     {
-        // if (gameManager.OnCarAnimationTimeUpdated != null)
+        if (Globals.IsServer && udpServer != null)
         {
             float animationTime = GetAnimationTime();
-            // gameManager.OnCarAnimationTimeUpdated.Invoke(carID, animationTime);
+            UDPServer.CarSyncUpdate syncUpdate = new UDPServer.CarSyncUpdate
+            {
+                carID = carID,
+                animationTime = animationTime
+            };
+
+            string message = JsonUtility.ToJson(syncUpdate);
+            udpServer.BroadcastMessage(message); // Appel à la méthode de diffusion du serveur
         }
     }
 }
