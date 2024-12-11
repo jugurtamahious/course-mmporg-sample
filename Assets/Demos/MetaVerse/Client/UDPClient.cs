@@ -17,8 +17,7 @@ public class UDPClient : MonoBehaviour
     private IPEndPoint ServerEndpoint;
 
     private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
-    public Vector3 targetPosition;
-    public Quaternion targetRotation;
+
 
     public delegate void CarUpdatePos(string carID, float time);
     public event CarUpdatePos OnCarUpdatePos;
@@ -87,14 +86,13 @@ public class UDPClient : MonoBehaviour
         {
             if (Globals.playerID != playerID)
             {
-               // Met à jour les cibles
-            targetPosition = positionData.position;
-            targetRotation = positionData.rotation;
 
-            // Interpolation
-            players[playerID].transform.position = Vector3.Lerp(players[playerID].transform.position, targetPosition, Time.deltaTime * 30f);
-            players[playerID].transform.rotation = Quaternion.Lerp(players[playerID].transform.rotation, targetRotation, Time.deltaTime * 30f);
-            
+
+
+                // Interpolation
+                players[playerID].transform.position = positionData.position;
+                players[playerID].transform.rotation = positionData.rotation;
+
                 Animator animator = players[playerID].GetComponent<Animator>();
 
                 if (animator)
