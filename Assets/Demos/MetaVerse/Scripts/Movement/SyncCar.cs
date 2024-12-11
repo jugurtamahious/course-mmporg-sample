@@ -23,6 +23,9 @@ public class SyncCar : MonoBehaviour
             Debug.LogError("Aucun composant Animation trouvé sur l'objet : " + carID);
             return;
         }
+
+        // Souscription à l'evennement
+        udpClient.OnCarUpdatePos += UpdateAnimation;
     }
 
     void Update()
@@ -39,9 +42,9 @@ public class SyncCar : MonoBehaviour
         }
     }
 
-    public void UpdateAnimation(float newAnimationTime)
+    public void UpdateAnimation(string otherCarID, float newAnimationTime)
     {
-        if (animationComponent)
+        if (animationComponent && carID == otherCarID)
         {
             // Obtenez l'animation actuelle
             AnimationState currentState = animationComponent[animationComponent.clip.name];
@@ -64,7 +67,7 @@ public class SyncCar : MonoBehaviour
             AnimationState currentState = animationComponent[animationComponent.clip.name];
             if (currentState != null)
             {
-                return currentState.time;
+                return (currentState.time % currentState.length) / currentState.length;
             }
         }
         return 0f;

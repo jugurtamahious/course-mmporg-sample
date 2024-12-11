@@ -18,6 +18,9 @@ public class UDPClient : MonoBehaviour
 
     private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
 
+    public delegate void CarUpdatePos(string carID, float time);
+    public event CarUpdatePos OnCarUpdatePos;
+
     void Awake()
     {
         if (Globals.IsServer)
@@ -73,30 +76,7 @@ public class UDPClient : MonoBehaviour
 
     public void UpdateCarPositions(CarSyncUpdate update)
     {
-        GameObject car = GameObject.Find(update.carID);
-        Animation carAnimation = car.GetComponent<Animation>();
-
-        if (carAnimation != null)
-        {
-            // Assurez-vous que l'animation est en cours de lecture
-            if (!carAnimation.isPlaying)
-            {
-                carAnimation.Play();
-            }
-
-
-            // Définir la durée de l'animation
-            foreach (AnimationState state in carAnimation)
-            {
-                state.time = update.animationTime;
-                carAnimation.Sample();
-            }
-        }
-        else
-        {
-            Debug.LogWarning($"Animation component not found on car with ID {update.carID}.");
-        }
-
+        OnCarUpdatePos?.Invoke(update.carID, update.animationTime);
     }
 
     public void MovePlayer(CharacterUpdate positionData, string playerID)
