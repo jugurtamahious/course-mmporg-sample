@@ -29,14 +29,14 @@ public class CharacterController : MonoBehaviour
     {
         if (Globals.IsServer)
         {
-            isLocalPlayer = false; // Le serveur ne contrôle pas de personnage
-            enabled = false; // Désactive ce script sur le serveur
+            isLocalPlayer = false;
+            enabled = false; 
         }
     }
 
     private void Start()
     {
-        if (!isLocalPlayer) return; // Ne rien faire pour le serveur
+        if (!isLocalPlayer) return; 
 
         Anim = GetComponent<Animator>();
         rb = GetComponent<Rigidbody>();
@@ -54,9 +54,8 @@ public class CharacterController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (!isLocalPlayer) return; // Ne rien faire pour le serveur
-
-        // Gestion des mouvements du joueur local
+        if (!isLocalPlayer) return; 
+ 
         HandleLocalMovement();
         SendPositionToServer();
     }
@@ -77,19 +76,33 @@ public class CharacterController : MonoBehaviour
 
     private void SendPositionToServer()
     {
-        CharacterUpdate update = new CharacterUpdate
-        {
-            playerID = playerID,
-            position = transform.position
-        };
-        
+        AnimatorStateInfo currentState = Anim.GetCurrentAnimatorStateInfo(0);
+            string animationName = currentState.IsName("Idle") ? "Idle" :
+                                   currentState.IsName("Walk") ? "Walk" : "Other";
 
-        string message = JsonUtility.ToJson(update);
-        udpClient.sendMesageToServer(message); // Envoyer au serveur uniquement si udpClient est configuré
+            CharacterUpdate update = new CharacterUpdate
+            {
+                playerID = Globals.playerID,
+                position = transform.position,
+                rotation = transform.rotation,
+                animation = animationName
+            };
+
+            string message = JsonUtility.ToJson(update);
+            udpClient.sendMesageToServer(message);
     }
 
     public void SetLocalPlayer(bool isLocal)
     {
         isLocalPlayer = isLocal;
+    }
+
+     [System.Serializable]
+    public class CharacterUpdate
+    {
+        public string playerID;
+        public Vector3 position;
+        public Quaternion rotation;
+        public string animation;
     }
 }

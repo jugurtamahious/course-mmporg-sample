@@ -48,26 +48,45 @@ public class UDPServer : MonoBehaviour
     /// <param name="playerID">ID unique du joueur.</param>
     public void MovePlayer(string message, string playerID)
     {
-        try
-        {
-            CharacterUpdate positionData = JsonUtility.FromJson<CharacterUpdate>(message);
+ 
+        CharacterUpdate positionData = JsonUtility.FromJson<CharacterUpdate>(message);
 
-            if (players.ContainsKey(playerID))
-            {
-                players[playerID].transform.position = positionData.position;
-            }
-            else
-            {
-                GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
-                newPlayer.transform.position = positionData.position;
-                players.Add(playerID, newPlayer);
-            }
-           
-        }
-        catch (System.Exception ex)
+        if (players.ContainsKey(playerID))
         {
-            Debug.LogError($"Error parsing JSON message: {message}. Exception: {ex.Message}");
+            players[playerID].transform.position = positionData.position;
+                
+                players[playerID].transform.rotation = positionData.rotation;
+
+            Animator animator =  players[playerID].GetComponent<Animator>();
+
+            if (animator)
+            {
+                    string animationToPlay = positionData.animation;
+
+                // Map "Other" to "Walk"
+                if (animationToPlay == "Other")
+                {
+                    animationToPlay = "Walk";
+                }
+        
+                if (animationToPlay == "Walk")
+                {
+                    animator.SetFloat("Walk", 1.0f); 
+                }
+                else
+                {
+                    animator.SetFloat("Walk", 0.0f);
+                }
+            }
         }
+        else
+        {
+            GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
+            newPlayer.transform.position = positionData.position;
+            newPlayer.transform.rotation = positionData.rotation;
+            players.Add(playerID, newPlayer);
+        }
+      
     }
    /// <summary>
     /// Envoie les positions de tous les joueurs à tous les clients connectés.
@@ -78,4 +97,14 @@ public class UDPServer : MonoBehaviour
         }
     }
 
+      [System.Serializable]
+    public class CharacterUpdate
+    {
+        public string playerID;
+        public Vector3 position;
+        public Quaternion rotation;
+        public string animation;
+    }
+    
+    
 }

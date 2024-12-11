@@ -45,40 +45,59 @@ public class UDPClient : MonoBehaviour
             sender.Address.ToString() + ":" + sender.Port
             + " =>" + message);
 
-        PlayerMessage playerMessage = JsonUtility.FromJson<PlayerMessage>(message);
-        // Passer le playerID à la méthode MovePlayer
-        MovePlayer(message, playerMessage.playerID);
-        //  gameManager.OnNewClientConnected(ServerEndpoint.ToString());
-
-
-    }
-
-    public void MovePlayer(string message, string playerID)
-    {
-
         try
         {
-            CharacterUpdate positionData = JsonUtility.FromJson<CharacterUpdate>(message);
-
-            if (players.ContainsKey(playerID))
-            {
-                if (Globals.playerID != playerID)
-                {
-                    players[playerID].transform.position = positionData.position;
-                }
-            }
-            else
-            {
-                GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
-                newPlayer.transform.position = positionData.position;
-                players.Add(playerID, newPlayer);
-            }
-
+            CharacterUpdate update = JsonUtility.FromJson<CharacterUpdate>(message);
+            MovePlayer(update, update.playerID);
         }
         catch (System.Exception ex)
         {
-            Debug.LogError($"Error parsing JSON message: {message}. Exception: {ex.Message}");
+            Debug.LogError($"Error parsing message: {ex.Message}");
         }
+
+    }
+
+     public void MovePlayer(string message, string playerID)
+    {
+ 
+        CharacterUpdate positionData = JsonUtility.FromJson<CharacterUpdate>(message);
+
+        if (players.ContainsKey(playerID))
+        {
+            players[playerID].transform.position = positionData.position;
+                
+                players[playerID].transform.rotation = positionData.rotation;
+
+            Animator animator =  players[playerID].GetComponent<Animator>();
+
+            if (animator)
+            {
+                    string animationToPlay = positionData.animation;
+
+                // Map "Other" to "Walk"
+                if (animationToPlay == "Other")
+                {
+                    animationToPlay = "Walk";
+                }
+        
+                if (animationToPlay == "Walk")
+                {
+                    animator.SetFloat("Walk", 1.0f); 
+                }
+                else
+                {
+                    animator.SetFloat("Walk", 0.0f);
+                }
+            }
+        }
+        else
+        {
+            GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
+            newPlayer.transform.position = positionData.position;
+            newPlayer.transform.rotation = positionData.rotation;
+            players.Add(playerID, newPlayer);
+        }
+      
     }
 
     public void sendMesageToServer(string message)
@@ -87,18 +106,12 @@ public class UDPClient : MonoBehaviour
     }
 
 
-    [System.Serializable]
-    public class PlayerMessage
+     [System.Serializable]
+    public class CharacterUpdate
     {
         public string playerID;
-        public Position position;
-    }
-
-    [System.Serializable]
-    public class Position
-    {
-        public float x;
-        public float y;
-        public float z;
+        public Vector3 position;
+        public Quaternion rotation;
+        public string animation;
     }
 }
