@@ -109,6 +109,24 @@ public class UDPServer : MonoBehaviour
         }
     }
 
+    public GameObject getPrefab(string ip)
+    {
+        if (players.ContainsKey(ip))
+        {
+            return players[ip];
+        }
+        return null;
+    }
+
+    public void RemoveClient(string playerID)
+    {
+        if (players.ContainsKey(playerID))
+        {
+            Destroy(players[playerID]);
+            players.Remove(playerID);
+        }
+    }
+
     public enum MessageType
     {
         CharacterUpdate,

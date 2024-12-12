@@ -8,10 +8,12 @@ public class GameManager : MonoBehaviour
     public GameObject CharacterPrefab;  // Le Prefab du personnage
     public Transform SpawnArea;         // Le point de spawn
 
+    public UDPServer udpServer;
+
     /* Variables Privées */
     private TCPService tcpService;      // Service TCP pour gérer les connexions
-    private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
     private ScoreManager scoreManager;
+
 
 
     /* Méthodes Unity */
@@ -27,11 +29,11 @@ public class GameManager : MonoBehaviour
         Debug.Log("GameManager démarré en mode serveur");
 
         // Find the ScoreManager instance
-        scoreManager = FindObjectOfType<ScoreManager>();
-        if (scoreManager != null)
-        {
-            scoreManager.UpdatePlayerList();
-        }
+        // scoreManager = FindObjectOfType<ScoreManager>();
+        // if (scoreManager != null)
+        // {
+        //     scoreManager.UpdatePlayerList();
+        // }
     }
 
 
@@ -65,7 +67,6 @@ public class GameManager : MonoBehaviour
             GameObject newCharacter = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
 
             // Ajouter le personnage à la liste des personnages clients
-            clientCharacters[clientAddress] = newCharacter;
             newCharacter.name = $"Character_{clientAddress}";
             Debug.Log($"Personnage créé pour le client {clientAddress}");
 
@@ -81,24 +82,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Getter du dictionnaire
-    public Dictionary<string, GameObject> getClientCharacters()
-    {
-        return clientCharacters;
-    }
-
-
     // Gestion de la suppression d'un client
     public void OnRemoveClient(string clientAddress)
     {
 
+        GameObject prefab = udpServer.getPrefab(clientAddress);
+
         Debug.Log("Removing client: " + clientAddress);
 
         // Regarde si l'instance du joueur existe
-        if (clientCharacters.TryGetValue(clientAddress, out GameObject character))
+        if (prefab != null)
         {
-            Destroy(character); // Supprimer l'instance du personnage
-            clientCharacters.Remove(clientAddress);
+            udpServer.RemoveClient(clientAddress);
             Debug.Log($"Personnage de {clientAddress} supprimé");
 
             // Update the ScoreManager with the new list of players
