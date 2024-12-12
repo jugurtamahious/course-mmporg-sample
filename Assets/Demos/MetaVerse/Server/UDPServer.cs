@@ -14,7 +14,6 @@ public class UDPServer : MonoBehaviour
 
 
     public Dictionary<string, IPEndPoint> Clients = new Dictionary<string, IPEndPoint>();
-    private Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
 
     void Awake()
     {
@@ -32,7 +31,7 @@ public class UDPServer : MonoBehaviour
 
         UDP.OnMessageReceived += (string message, IPEndPoint sender) =>
         {
-            string playerID = sender.Address.ToString() + ":" + sender.Port;
+            string playerID = sender.Address.ToString();
 
             if (!Clients.ContainsKey(playerID))
             {
@@ -53,13 +52,13 @@ public class UDPServer : MonoBehaviour
     {
         CharacterUpdate positionData = JsonUtility.FromJson<CharacterUpdate>(message);
 
-        if (players.ContainsKey(playerID))
+        if (GameManager.clientCharacters.ContainsKey(playerID))
         {
-            players[playerID].transform.position = positionData.position;
+            GameManager.clientCharacters[playerID].transform.position = positionData.position;
 
-            players[playerID].transform.rotation = positionData.rotation;
+            GameManager.clientCharacters[playerID].transform.rotation = positionData.rotation;
 
-            Animator animator = players[playerID].GetComponent<Animator>();
+            Animator animator = GameManager.clientCharacters[playerID].GetComponent<Animator>();
 
             if (animator)
             {
@@ -86,7 +85,7 @@ public class UDPServer : MonoBehaviour
             GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
             newPlayer.transform.position = positionData.position;
             newPlayer.transform.rotation = positionData.rotation;
-            players.Add(playerID, newPlayer);
+            GameManager.clientCharacters.Add(playerID, newPlayer);
         }
 
     }

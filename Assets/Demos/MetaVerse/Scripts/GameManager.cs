@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
 
     /* Variables Privées */
     private TCPService tcpService;      // Service TCP pour gérer les connexions
-    private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
+    public static Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
     private ScoreManager scoreManager;
 
 
@@ -55,6 +55,7 @@ public class GameManager : MonoBehaviour
         OnRemoveClient(clientAddress);
         SpawnClient(clientAddress);
     }
+    
 
     // Gestion de la création d'un nouveau client
     public void SpawnClient(string clientAddress)
@@ -91,6 +92,8 @@ public class GameManager : MonoBehaviour
     // Gestion de la suppression d'un client
     public void OnRemoveClient(string clientAddress)
     {
+
+        Debug.Log("Removing client: " + clientAddress);
 
         // Regarde si l'instance du joueur existe
         if (clientCharacters.TryGetValue(clientAddress, out GameObject character))

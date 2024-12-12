@@ -48,6 +48,7 @@
         }
 
         private void OnClientRemoved(string ip) {
+            Debug.Log("Client removed");
             GameManager.OnRemoveClient(ip);
         }
 

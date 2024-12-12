@@ -47,9 +47,6 @@ public class UDPClient : MonoBehaviour
     private UDPService UDP;
 
     private IPEndPoint ServerEndpoint;
-
-    public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
-
     /* Events */
 
     public delegate void CarUpdatePos(string carID, float time);
@@ -86,11 +83,8 @@ public class UDPClient : MonoBehaviour
         virtualCamera.Follow = newPlayer.transform;
         virtualCamera.LookAt = newPlayer.transform;
 
-
-
-
-        Globals.playerID = "Player" + UnityEngine.Random.Range(1000, 9999).ToString();
-        players.Add(Globals.playerID, newPlayer);
+        Globals.playerID = Globals.getLocalIPAddress();
+        GameManager.clientCharacters.Add(Globals.playerID, newPlayer);
 
         ServerEndpoint = new IPEndPoint(IPAddress.Parse(Globals.HostIP), Globals.HostPort);
 
@@ -156,12 +150,12 @@ public class UDPClient : MonoBehaviour
         }
 
         // Si le joueur existe déjà, mettez à jour sa position et animation
-        if (players.ContainsKey(playerID))
+        if (GameManager.clientCharacters.ContainsKey(playerID))
         {
-            players[playerID].transform.position = positionData.position;
-            players[playerID].transform.rotation = positionData.rotation;
+            GameManager.clientCharacters[playerID].transform.position = positionData.position;
+            GameManager.clientCharacters[playerID].transform.rotation = positionData.rotation;
 
-            Animator animator = players[playerID].GetComponent<Animator>();
+            Animator animator = GameManager.clientCharacters[playerID].GetComponent<Animator>();
             if (animator)
             {
                 string animationToPlay = positionData.animation;
@@ -187,7 +181,7 @@ public class UDPClient : MonoBehaviour
             GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
             newPlayer.transform.position = positionData.position;
             newPlayer.transform.rotation = positionData.rotation;
-            players.Add(playerID, newPlayer);
+            GameManager.clientCharacters.Add(playerID, newPlayer);
         }
     }
 
