@@ -83,10 +83,10 @@ public class UDPServer : MonoBehaviour
         }
         else
         {
-            GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
-            newPlayer.transform.position = positionData.position;
-            newPlayer.transform.rotation = positionData.rotation;
-            players.Add(playerID, newPlayer);
+            // GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
+            // newPlayer.transform.position = positionData.position;
+            // newPlayer.transform.rotation = positionData.rotation;
+            // players.Add(playerID, newPlayer);
         }
 
     }
