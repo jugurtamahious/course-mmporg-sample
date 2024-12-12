@@ -1,6 +1,7 @@
 using System.Net;
 using UnityEngine;
 using System.Collections.Generic;
+using Unity.Cinemachine;
 
 public class UDPClient : MonoBehaviour
 {
@@ -74,9 +75,19 @@ public class UDPClient : MonoBehaviour
 
         UDP.InitClient();
 
+        // Création du joueur local
         GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
         CharacterController c = newPlayer.GetComponent<CharacterController>();
         c.enabled = true;
+    
+        // Récupérer le tracking de la caméra
+        GameObject cinemachine = GameObject.FindWithTag("Cinemachine");
+        CinemachineCamera  virtualCamera = cinemachine.GetComponent<CinemachineCamera>();
+        virtualCamera.Follow = newPlayer.transform;
+        virtualCamera.LookAt = newPlayer.transform;
+
+
+
 
         Globals.playerID = "Player" + UnityEngine.Random.Range(1000, 9999).ToString();
         players.Add(Globals.playerID, newPlayer);

@@ -27,18 +27,6 @@ public class GameManager : MonoBehaviour
 
         Debug.Log("GameManager démarré en mode serveur");
 
-        // Mettre l'instance du joueur existant (serveur) dans le dictionnaire
-        GameObject hostPlayer = GameObject.FindWithTag("localPlayer");
-
-        if (hostPlayer != null)
-        {
-            clientCharacters[Globals.HostIP] = hostPlayer;
-        }
-        else
-        {
-            Debug.LogError("Aucun GameObject avec le tag 'hostPlayer' trouvé !");
-        }
-
         // Find the ScoreManager instance
         scoreManager = FindObjectOfType<ScoreManager>();
         if (scoreManager != null)
