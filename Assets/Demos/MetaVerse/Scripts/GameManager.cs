@@ -23,7 +23,6 @@ public class GameManager : MonoBehaviour
 
         // Abonnement aux évenements
         tcpService.OnClientConnected += OnNewClientConnected;
-        tcpService.StartServer(Globals.HostPort);
 
         Debug.Log("GameManager démarré en mode serveur");
 
@@ -53,7 +52,7 @@ public class GameManager : MonoBehaviour
 
         // Supprimer toute instance existante pour ce client
         OnRemoveClient(clientAddress);
-        SpawnClient(clientAddress);
+        // SpawnClient(clientAddress);
     }
     
 
