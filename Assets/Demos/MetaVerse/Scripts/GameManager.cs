@@ -25,6 +25,7 @@ public class GameManager : MonoBehaviour
 
         // Abonnement aux évenements
         tcpService.OnClientConnected += OnNewClientConnected;
+        tcpService.OnClientRemoved += OnRemoveClient;
 
         Debug.Log("GameManager démarré en mode serveur");
 

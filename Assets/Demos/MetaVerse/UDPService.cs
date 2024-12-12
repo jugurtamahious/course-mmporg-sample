@@ -99,14 +99,12 @@ public class UDPService : MonoBehaviour
 
         while (udp.Available > 0)
         {
+            try {
             IPEndPoint sourceEP = new IPEndPoint(IPAddress.Any, 0);
             byte[] data = udp.Receive(ref sourceEP);
-
-            try
-            {
                 ParseString(data, sourceEP);
             }
-            catch (System.Exception ex)
+            catch (SocketException ex) 
             {
                 Debug.LogWarning("Error receiving UDP message: " + ex.Message);
             }

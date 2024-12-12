@@ -17,7 +17,7 @@ public class ScoreManager : MonoBehaviour
     udpClient = FindObjectOfType<UDPClient>();
     if (udpClient == null)
     {
-      Debug.LogError("UDPClient instance not found in the scene.");
+      Debug.Log("UDPClient instance not found in the scene.");
     }
   }
 
