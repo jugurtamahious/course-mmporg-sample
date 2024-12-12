@@ -10,7 +10,7 @@ public class GameManager : MonoBehaviour
 
     /* Variables Privées */
     private TCPService tcpService;      // Service TCP pour gérer les connexions
-    public static Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
+    private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
     private ScoreManager scoreManager;
 
 

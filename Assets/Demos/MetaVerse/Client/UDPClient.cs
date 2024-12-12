@@ -47,6 +47,9 @@ public class UDPClient : MonoBehaviour
     private UDPService UDP;
 
     private IPEndPoint ServerEndpoint;
+
+    public Dictionary<string, GameObject> players = new Dictionary<string, GameObject>();
+
     /* Events */
 
     public delegate void CarUpdatePos(string carID, float time);
@@ -84,7 +87,7 @@ public class UDPClient : MonoBehaviour
         virtualCamera.LookAt = newPlayer.transform;
 
         Globals.playerID = Globals.getLocalIPAddress();
-        GameManager.clientCharacters.Add(Globals.playerID, newPlayer);
+        players.Add(Globals.playerID, newPlayer);
 
         ServerEndpoint = new IPEndPoint(IPAddress.Parse(Globals.HostIP), Globals.HostPort);
 
@@ -150,12 +153,12 @@ public class UDPClient : MonoBehaviour
         }
 
         // Si le joueur existe déjà, mettez à jour sa position et animation
-        if (GameManager.clientCharacters.ContainsKey(playerID))
+        if (players.ContainsKey(playerID))
         {
-            GameManager.clientCharacters[playerID].transform.position = positionData.position;
-            GameManager.clientCharacters[playerID].transform.rotation = positionData.rotation;
+            players[playerID].transform.position = positionData.position;
+            players[playerID].transform.rotation = positionData.rotation;
 
-            Animator animator = GameManager.clientCharacters[playerID].GetComponent<Animator>();
+            Animator animator = players[playerID].GetComponent<Animator>();
             if (animator)
             {
                 string animationToPlay = positionData.animation;
@@ -181,7 +184,7 @@ public class UDPClient : MonoBehaviour
             GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
             newPlayer.transform.position = positionData.position;
             newPlayer.transform.rotation = positionData.rotation;
-            GameManager.clientCharacters.Add(playerID, newPlayer);
+            players.Add(playerID, newPlayer);
         }
     }
 

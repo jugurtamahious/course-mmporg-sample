@@ -45,7 +45,7 @@ public class ScoreManager : MonoBehaviour
       }
     }
 
-    Dictionary<string, GameObject> players = GameManager.clientCharacters;
+    Dictionary<string, GameObject> players = udpClient.players;
     playersList.Clear();
     foreach (var player in players.Values)
     {
