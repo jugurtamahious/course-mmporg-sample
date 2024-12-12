@@ -4,19 +4,30 @@ using UnityEngine.InputSystem;
 public enum MessageType
 {
     CharacterUpdate,
-    CarPositionUpdate
+    CarPositionUpdate, 
+    DonutUpdate
 }
+
+[System.Serializable]
+public class BaseMessage
+{
+    public MessageType messageType;
+}
+
+[System.Serializable]
+public class DonutUpdate : BaseMessage
+{
+    public string donutID;
+    public bool isEaten;
+}
+
 [System.Serializable]
 public class CarSyncUpdate : BaseMessage
 {
     public string carID;
     public float animationTime;
 }
-[System.Serializable]
-public class BaseMessage
-{
-    public MessageType messageType;
-}
+
 
 [System.Serializable]
 public class CharacterUpdate : BaseMessage

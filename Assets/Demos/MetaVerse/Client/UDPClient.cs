@@ -16,6 +16,13 @@ public class UDPClient : MonoBehaviour
     }
 
     [System.Serializable]
+    public class DonutUpdate : BaseMessage
+    {
+        public string donutID;
+        public bool isEaten;
+    }
+
+    [System.Serializable]
     public class CharacterUpdate
     {
         public string playerID;
@@ -55,6 +62,9 @@ public class UDPClient : MonoBehaviour
     public delegate void CarUpdatePos(string carID, float time);
     public event CarUpdatePos OnCarUpdatePos;
 
+    public delegate void DonutUpdateState(string donutID, bool isEaten);
+    public event DonutUpdateState OnDonutUpdate;
+
     /* Méthodes Unity */
 
     // On détruit l'objet si ce n'est pas le serveur
@@ -79,10 +89,10 @@ public class UDPClient : MonoBehaviour
         GameObject newPlayer = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
         CharacterController c = newPlayer.GetComponent<CharacterController>();
         c.enabled = true;
-    
+
         // Récupérer le tracking de la caméra
         GameObject cinemachine = GameObject.FindWithTag("Cinemachine");
-        CinemachineCamera  virtualCamera = cinemachine.GetComponent<CinemachineCamera>();
+        CinemachineCamera virtualCamera = cinemachine.GetComponent<CinemachineCamera>();
         virtualCamera.Follow = newPlayer.transform;
         virtualCamera.LookAt = newPlayer.transform;
 
@@ -109,7 +119,6 @@ public class UDPClient : MonoBehaviour
         // Désérialisation du message
         try
         {
-
             // Lecture du type de message
             BaseMessage baseMessage = JsonUtility.FromJson<BaseMessage>(message);
 
@@ -126,6 +135,11 @@ public class UDPClient : MonoBehaviour
                     CarSyncUpdate updateCar = JsonUtility.FromJson<CarSyncUpdate>(message);
                     UpdateCarPositions(updateCar);
                     break;
+
+                case MessageType.DonutUpdate:
+                    DonutUpdate updateDonut = JsonUtility.FromJson<DonutUpdate>(message);
+                    UpdateDonut(updateDonut);
+                    break;
             }
 
 
@@ -141,6 +155,11 @@ public class UDPClient : MonoBehaviour
     public void UpdateCarPositions(CarSyncUpdate update)
     {
         OnCarUpdatePos?.Invoke(update.carID, update.animationTime);
+    }
+
+    public void UpdateDonut(DonutUpdate update)
+    {
+        OnDonutUpdate?.Invoke(update.donutID, update.isEaten);
     }
 
     // Déplacement du joueur

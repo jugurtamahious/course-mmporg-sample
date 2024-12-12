@@ -109,6 +109,13 @@ public class UDPServer : MonoBehaviour
         }
     }
 
+    public void BroadcastDonutState(string message) {
+        foreach (KeyValuePair<string, IPEndPoint> client in Clients)
+        {
+            UDP.SendUDPMessage(message, client.Value);
+        }
+    }
+
     public GameObject getPrefab(string ip)
     {
         if (players.ContainsKey(ip))
@@ -130,7 +137,8 @@ public class UDPServer : MonoBehaviour
     public enum MessageType
     {
         CharacterUpdate,
-        CarPositionUpdate
+        CarPositionUpdate,
+        DonutUpdate
     }
 
     [System.Serializable]
@@ -146,6 +154,13 @@ public class UDPServer : MonoBehaviour
         public Vector3 position;
         public Quaternion rotation;
         public string animation;
+    }
+
+    [System.Serializable]
+    public class DonutUpdate : BaseMessage
+    {
+        public string donutID;
+        public bool isEaten;
     }
 
     [System.Serializable]
