@@ -8,10 +8,12 @@ public class GameManager : MonoBehaviour
     public GameObject CharacterPrefab;  // Le Prefab du personnage
     public Transform SpawnArea;         // Le point de spawn
 
+    public UDPServer udpServer;
+
     /* Variables Privées */
     private TCPService tcpService;      // Service TCP pour gérer les connexions
-    private Dictionary<string, GameObject> clientCharacters = new Dictionary<string, GameObject>();
     private ScoreManager scoreManager;
+
 
 
     /* Méthodes Unity */
@@ -23,28 +25,15 @@ public class GameManager : MonoBehaviour
 
         // Abonnement aux évenements
         tcpService.OnClientConnected += OnNewClientConnected;
-        tcpService.StartServer(Globals.HostPort);
 
         Debug.Log("GameManager démarré en mode serveur");
 
-        // Mettre l'instance du joueur existant (serveur) dans le dictionnaire
-        GameObject hostPlayer = GameObject.FindWithTag("localPlayer");
-
-        if (hostPlayer != null)
-        {
-            clientCharacters[Globals.HostIP] = hostPlayer;
-        }
-        else
-        {
-            Debug.LogError("Aucun GameObject avec le tag 'hostPlayer' trouvé !");
-        }
-
         // Find the ScoreManager instance
-        scoreManager = FindObjectOfType<ScoreManager>();
-        if (scoreManager != null)
-        {
-            scoreManager.UpdatePlayerList();
-        }
+        // scoreManager = FindObjectOfType<ScoreManager>();
+        // if (scoreManager != null)
+        // {
+        //     scoreManager.UpdatePlayerList();
+        // }
     }
 
 
@@ -52,25 +41,6 @@ public class GameManager : MonoBehaviour
     {
 
     }
-
-    // Gestion de l'événement lorsqu'un message est reçu via TCP
-    // private void OnMessageReceived(string message, TcpClient sender)
-    // {
-    //     string clientAddress = ((System.Net.IPEndPoint)sender.Client.RemoteEndPoint).Address.ToString();
-
-    //     if (message == "connect")
-    //     {
-    //         OnNewClientConnected(clientAddress);
-    //     }
-    //     else if (message == "disconnect")
-    //     {
-    //         OnRemoveClient(clientAddress);
-    //     }
-    //     else
-    //     {
-    //         Debug.Log($"Message reçu de {clientAddress} : {message}");
-    //     }
-    // }
 
     // Gestion de l'événement lorsqu'un nouveau client se connecte
     public void OnNewClientConnected(string clientAddress)
@@ -86,6 +56,7 @@ public class GameManager : MonoBehaviour
         OnRemoveClient(clientAddress);
         // SpawnClient(clientAddress);
     }
+    
 
     // Gestion de la création d'un nouveau client
     public void SpawnClient(string clientAddress)
@@ -96,7 +67,6 @@ public class GameManager : MonoBehaviour
             GameObject newCharacter = Instantiate(CharacterPrefab, SpawnArea.position, SpawnArea.rotation);
 
             // Ajouter le personnage à la liste des personnages clients
-            clientCharacters[clientAddress] = newCharacter;
             newCharacter.name = $"Character_{clientAddress}";
             Debug.Log($"Personnage créé pour le client {clientAddress}");
 
@@ -112,22 +82,18 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    // Getter du dictionnaire
-    public Dictionary<string, GameObject> getClientCharacters()
-    {
-        return clientCharacters;
-    }
-
-
     // Gestion de la suppression d'un client
     public void OnRemoveClient(string clientAddress)
     {
 
+        GameObject prefab = udpServer.getPrefab(clientAddress);
+
+        Debug.Log("Removing client: " + clientAddress);
+
         // Regarde si l'instance du joueur existe
-        if (clientCharacters.TryGetValue(clientAddress, out GameObject character))
+        if (prefab != null)
         {
-            Destroy(character); // Supprimer l'instance du personnage
-            clientCharacters.Remove(clientAddress);
+            udpServer.RemoveClient(clientAddress);
             Debug.Log($"Personnage de {clientAddress} supprimé");
 
             // Update the ScoreManager with the new list of players
